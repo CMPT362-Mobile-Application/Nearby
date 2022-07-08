@@ -1,25 +1,30 @@
 package com.cmpt362co.genericproject
 
-import android.content.DialogInterface
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
-
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import android.view.animation.Animation
+import android.view.animation.TranslateAnimation
+import androidx.appcompat.app.AppCompatActivity
+import com.cmpt362co.genericproject.animation.PinDetailAnimation
 import com.cmpt362co.genericproject.databinding.ActivityMapsBinding
 import com.google.android.gms.maps.*
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
+
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
-
+    // Google map variable
     private lateinit var mMap: GoogleMap
+    // Binding for the xml file
     private lateinit var binding: ActivityMapsBinding
+    private var detailActive: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Create the binding and set content view
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        // Hides the top tool bar
         supportActionBar?.hide()
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -51,18 +56,20 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
         }
 
         mMap.setOnMarkerClickListener {
-            val builder = AlertDialog.Builder(this)
-            builder.setMessage("Marker @: ${it.position.toString()}")
-                .setPositiveButton("More",
-                    DialogInterface.OnClickListener { dialog, id ->
-                        // START THE GAME!
-                    })
-                .setNegativeButton("Cancel",
-                    DialogInterface.OnClickListener { dialog, id ->
-                        // User cancelled the dialog
-                    })
-            // Create the AlertDialog object and return it
-            builder.create().show()
+            println("debug: clicked")
+            var animation: Animation? = null
+            if (detailActive) {
+                animation = PinDetailAnimation(binding.pinDetailFragmentContainer, 1000, 1)
+                println("debug: closed")
+                detailActive = false
+            } else {
+                animation = PinDetailAnimation(binding.pinDetailFragmentContainer, 1000, 0)
+                println("debug: open")
+                detailActive = true
+            }
+            animation.duration = 1000
+            binding.pinDetailFragmentContainer.startAnimation(animation)
+
             return@setOnMarkerClickListener true
         }
     }

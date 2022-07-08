@@ -3,7 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/GenericProject/app/src/main/res/layout/activity_favourite.xml" value="0.3614583333333333" />
         <entry key="..\:/GenericProject/app/src/main/res/layout/activity_maps.xml" value="0.18541666666666667" />
+        <entry key="..\:/GenericProject/app/src/main/res/layout/activity_new_post.xml" value="0.3614583333333333" />
+        <entry key="..\:/GenericProject/app/src/main/res/layout/activity_settings.xml" value="0.27109375" />
+        <entry key="..\:/GenericProject/app/src/main/res/layout/fragment_pin_details.xml" value="0.2965811965811966" />
       </map>
     </option>
   </component>
