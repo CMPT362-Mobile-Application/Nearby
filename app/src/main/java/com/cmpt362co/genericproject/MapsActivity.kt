@@ -1,11 +1,14 @@
 package com.cmpt362co.genericproject
 
+import android.graphics.Insets.add
 import android.os.Bundle
 import android.view.animation.Animation
-import android.view.animation.TranslateAnimation
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import com.cmpt362co.genericproject.animation.PinDetailAnimation
 import com.cmpt362co.genericproject.databinding.ActivityMapsBinding
+import com.cmpt362co.genericproject.fragments.PinDetailsFragment
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
@@ -63,6 +66,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
                 println("debug: closed")
                 detailActive = false
             } else {
+                val newFragment: Fragment = PinDetailsFragment()
+                val ft: FragmentTransaction = supportFragmentManager.beginTransaction()
+                ft.add(R.id.pin_detail_fragment_container, newFragment).commit()
                 animation = PinDetailAnimation(binding.pinDetailFragmentContainer, 1000, 0)
                 println("debug: open")
                 detailActive = true
