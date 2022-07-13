@@ -1,11 +1,10 @@
-package com.cmpt362co.genericproject
+package com.cmpt362.nearby
 
 import android.os.Bundle
 import android.view.animation.Animation
-import android.view.animation.TranslateAnimation
 import androidx.appcompat.app.AppCompatActivity
-import com.cmpt362co.genericproject.animation.PinDetailAnimation
-import com.cmpt362co.genericproject.databinding.ActivityMapsBinding
+import com.cmpt362.nearby.animation.PinDetailAnimation
+import com.cmpt362.nearby.databinding.ActivityMapsBinding
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
