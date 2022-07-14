@@ -5,4 +5,24 @@
     <!--  Favourites Activity  -->
     <string name="favourites_myposts">My Posts</string>
     <string name="favourites_favourites">Favourites</string>
+
+    <!--  Add Post Activity  -->
+    <string name="addpost_title">Add Post</string>
+    <string name="addpost_addimage">Add Image</string>
+    <string name="addpost_name">Name</string>
+    <string name="addpost_category">Category</string>
+    <string name="addpost_event">Is Event?</string>
+    <string name="addpost_location">Location</string>
+    <string name="addpost_description">Description</string>
+    <string name="addpost_create">Create</string>
+    <string name="addpost_cancel">Cancel</string>
+    <string name="addpost_eventstart">Set Start</string>
+    <string name="addpost_eventend">Set End</string>
+    <string-array name="addpost_categories">
+        <item>Tag 1</item>
+        <item>Tag 2</item>
+        <item>Tag 3</item>
+        <item>Tag 4</item>
+        <item>Tag 5</item>
+    </string-array>
 </resources>
