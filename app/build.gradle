@@ -8,7 +8,7 @@ android {
     compileSdk 32
 
     defaultConfig {
-        applicationId "com.cmpt362co.genericproject"
+        applicationId "com.cmpt362.nearby"
         minSdk 26
         targetSdk 32
         versionCode 1
