@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="10dp"
+    android:gravity="center">
+    <TextView
+        android:id="@+id/filter_list_view_tag"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:layout_weight="99"
+        android:text="Placeholder"
+        android:textSize="20dp"/>
+    <ImageButton
+        android:id="@+id/filter_list_view_delete_button"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_alignParentEnd="true"
+        android:background="@null"
+        android:scaleType="centerInside"
+        android:src="@drawable/x_gray" />
+</LinearLayout>

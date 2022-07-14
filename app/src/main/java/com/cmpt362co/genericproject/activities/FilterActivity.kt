@@ -1,22 +1,31 @@
 package com.cmpt362co.genericproject.activities
 
-import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.view.View
+import android.widget.AdapterView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
+import com.cmpt362co.genericproject.adapters.FilterListViewAdapter
 import com.cmpt362co.genericproject.databinding.ActivityFilterBinding
+import com.cmpt362co.genericproject.viewmodels.FilterViewModel
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 class FilterActivity : AppCompatActivity() {
 
     private var PREFERENCES_KEY = "cmpt362co"
     private lateinit var sharedPref: SharedPreferences
     private lateinit var sharedPrefEditor: SharedPreferences.Editor
+
+    private lateinit var filterViewModel: FilterViewModel
+
+    private lateinit var filterListViewAdapter: FilterListViewAdapter
+
     private val earliestDate = Calendar.getInstance()
     private val latestDate = Calendar.getInstance()
     // Keys for the stored values
@@ -28,6 +37,15 @@ class FilterActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFilterBinding.inflate(layoutInflater)
+        // Get the viewmodel
+        filterViewModel = ViewModelProvider(this).get(FilterViewModel::class.java)
+        if (filterViewModel.selectedTags.value == null) {filterViewModel.selectedTags.value = ArrayList()}
+
+        // Init viewadapter
+        filterListViewAdapter = FilterListViewAdapter(this, filterViewModel.selectedTags.value!!)
+        filterViewModel.selectedTags.observe(this) {
+            filterListViewAdapter.notifyDataSetChanged()
+        }
 
         // Initialize the variables for Shared Preferences
         sharedPref = getSharedPreferences(PREFERENCES_KEY, Context.MODE_PRIVATE)
@@ -50,10 +68,42 @@ class FilterActivity : AppCompatActivity() {
         binding.filterEarliestTimeButton.text = SimpleDateFormat("hh:mm aa").format(
             earliestDate.getTime()
         )
-
-
+        //Adapters
+        binding.filterSelectedTagsList.adapter = filterListViewAdapter
 
         // Listeners
+        binding.filterClearButton.setOnClickListener {
+            filterViewModel.selectedTags.value!!.clear()
+            filterListViewAdapter.notifyDataSetChanged()
+            sharedPrefEditor.remove(LATEST_DATETIME_FILTER_KEY)
+            sharedPrefEditor.remove(EARLIEST_DATETIME_FILTER_KEY)
+            sharedPrefEditor.commit()
+            latestDate.time = Date(sharedPref.getLong(LATEST_DATETIME_FILTER_KEY, Calendar.getInstance().timeInMillis))
+            earliestDate.time = Date(sharedPref.getLong(EARLIEST_DATETIME_FILTER_KEY, Calendar.getInstance().timeInMillis))
+            binding.filterLatestDateButton.text = SimpleDateFormat("MMM dd yyyy").format(
+                latestDate.getTime()
+            )
+            binding.filterLatestTimeButton.text = SimpleDateFormat("hh:mm aa").format(
+                latestDate.getTime()
+            )
+            binding.filterEarliestDateButton.text = SimpleDateFormat("MMM dd yyyy").format(
+                earliestDate.getTime()
+            )
+            binding.filterEarliestTimeButton.text = SimpleDateFormat("hh:mm aa").format(
+                earliestDate.getTime()
+            )
+        }
+        binding.filterTagsSelectorButton.setOnClickListener {
+            if (filterViewModel.selectedTags.value != null && binding.filterTagsSelector.text.toString().trim().isNotEmpty())
+            {
+                if (!filterViewModel.selectedTags.value!!.contains(binding.filterTagsSelector.text.toString()))
+                {
+                    filterViewModel.selectedTags.value!!.add(binding.filterTagsSelector.text.toString())
+                    filterListViewAdapter.notifyDataSetChanged()
+                }
+            }
+            binding.filterTagsSelector.setText("")
+        }
         binding.filterEarliestDateButton.setOnClickListener {
             val dialog = DatePickerDialog(this)
             dialog.updateDate(earliestDate.get(Calendar.YEAR), earliestDate.get(Calendar.MONTH), earliestDate.get(Calendar.DAY_OF_MONTH))
