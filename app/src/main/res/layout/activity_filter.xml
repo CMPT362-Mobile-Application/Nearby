@@ -56,17 +56,17 @@
                 android:textSize="20dp" />
 
             <Button
+                android:id="@+id/filter_earliest_date_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
                 android:layout_weight="1"
+                android:layout_marginRight="5dp"
                 android:text="date" />
 
             <Button
+                android:id="@+id/filter_earliest_time_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_weight="1"
                 android:text="time" />
@@ -87,17 +87,17 @@
                 android:textSize="20dp" />
 
             <Button
+                android:id="@+id/filter_latest_date_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
+                android:layout_marginRight="5dp"
                 android:layout_weight="1"
                 android:text="date" />
 
             <Button
+                android:id="@+id/filter_latest_time_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_weight="1"
                 android:text="time" />
