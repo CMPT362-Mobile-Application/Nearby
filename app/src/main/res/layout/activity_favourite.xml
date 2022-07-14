@@ -1,6 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/favouriteTopButtons"
+        android:padding="16dp">
+
+        <Button
+            android:id="@+id/favouriteLeftButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/favourites_myposts"
+            android:background="@drawable/favourite_button_left_active"
+            app:backgroundTint="@null"
+            android:fontFamily="sans-serif"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            tools:ignore="ButtonStyle" />
+
+        <Button
+            android:id="@+id/favouriteRightButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/favourites_favourites"
+            android:background="@drawable/favourite_button_right_inactive"
+            app:backgroundTint="@null"
+            android:fontFamily="sans-serif"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            tools:ignore="ButtonStyle" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/favouriteTopButtons"
+        android:layout_marginStart="16dp"
+        android:id="@+id/favouriteTitle"
+        android:text="@string/favourites_myposts"
+        android:textStyle="bold"
+        android:textSize="32sp"/>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/favouriteTitle"/>
 
 </RelativeLayout>
