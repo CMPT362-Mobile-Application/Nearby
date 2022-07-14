@@ -1,4 +1,4 @@
-package com.cmpt362co.genericproject
+package com.cmpt362.nearby
 
 import org.junit.Test
 
