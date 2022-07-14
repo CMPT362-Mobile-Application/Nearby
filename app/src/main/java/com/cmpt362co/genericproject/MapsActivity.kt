@@ -1,16 +1,19 @@
 package com.cmpt362co.genericproject
 
+import android.content.Intent
 import android.graphics.Insets.add
 import android.os.Bundle
 import android.view.animation.Animation
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import com.cmpt362co.genericproject.activities.FilterActivity
 import com.cmpt362co.genericproject.animation.PinDetailAnimation
 import com.cmpt362co.genericproject.databinding.ActivityMapsBinding
 import com.cmpt362co.genericproject.fragments.PinDetailsFragment
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 
 
@@ -34,6 +37,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+        binding.mainFilterButton.setOnClickListener{
+            val intent = Intent(this, FilterActivity::class.java).apply {
+
+            }
+            startActivity(intent)
+        }
     }
 
     /**
@@ -54,29 +64,49 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
         mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
 
-        mMap.setOnMapClickListener {
-            mMap.addMarker(MarkerOptions().position(it).title("Placed"))
-        }
-
         mMap.setOnMarkerClickListener {
-            println("debug: clicked")
-            var animation: Animation? = null
+
             if (detailActive) {
-                animation = PinDetailAnimation(binding.pinDetailFragmentContainer, 1000, 1)
-                println("debug: closed")
+                pinDetailsClose()
                 detailActive = false
             } else {
-                val newFragment: Fragment = PinDetailsFragment()
-                val ft: FragmentTransaction = supportFragmentManager.beginTransaction()
-                ft.add(R.id.pin_detail_fragment_container, newFragment).commit()
-                animation = PinDetailAnimation(binding.pinDetailFragmentContainer, 1000, 0)
-                println("debug: open")
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(it.position));
+                mMap.moveCamera(CameraUpdateFactory.zoomTo(15.0f));
+                pinDetailsOpen()
                 detailActive = true
             }
-            animation.duration = 1000
-            binding.pinDetailFragmentContainer.startAnimation(animation)
 
             return@setOnMarkerClickListener true
         }
+    }
+
+    private fun pinDetailsOpen() {
+        //Zoom on the pin selected
+        val newFragment: Fragment = PinDetailsFragment()
+        val ft: FragmentTransaction = supportFragmentManager.beginTransaction()
+        ft.add(R.id.pin_detail_fragment_container, newFragment).commit()
+        var animation: Animation? = null
+        animation = PinDetailAnimation(binding.pinDetailFragmentContainer, 1000, 0)
+        animation.duration = 1000
+        mMap.uiSettings.isScrollGesturesEnabled = false;
+        mMap.uiSettings.isRotateGesturesEnabled = false;
+        mMap.uiSettings.isZoomControlsEnabled = false;
+        mMap.uiSettings.isZoomGesturesEnabled = false;
+        mMap.uiSettings.isTiltGesturesEnabled = false;
+        mMap.uiSettings.isScrollGesturesEnabledDuringRotateOrZoom = false;
+        binding.pinDetailFragmentContainer.startAnimation(animation)
+    }
+    private fun pinDetailsClose() {
+        var animation: Animation? = null
+        animation = PinDetailAnimation(binding.pinDetailFragmentContainer, 1000, 1)
+        animation.duration = 1000
+        mMap.uiSettings.isScrollGesturesEnabled = true;
+        mMap.uiSettings.isScrollGesturesEnabled = true;
+        mMap.uiSettings.isRotateGesturesEnabled = true;
+        mMap.uiSettings.isZoomControlsEnabled = true;
+        mMap.uiSettings.isZoomGesturesEnabled = true;
+        mMap.uiSettings.isTiltGesturesEnabled = true;
+        mMap.uiSettings.isScrollGesturesEnabledDuringRotateOrZoom = true;
+        binding.pinDetailFragmentContainer.startAnimation(animation)
     }
 }
