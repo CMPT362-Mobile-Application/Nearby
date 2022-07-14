@@ -22,6 +22,7 @@
             android:fontFamily="sans-serif"
             android:textAllCaps="false"
             android:textStyle="bold"
+            android:textColor="@color/white"
             tools:ignore="ButtonStyle" />
 
         <Button
@@ -35,6 +36,7 @@
             android:fontFamily="sans-serif"
             android:textAllCaps="false"
             android:textStyle="bold"
+            android:textColor="@color/white"
             tools:ignore="ButtonStyle" />
 
     </LinearLayout>
