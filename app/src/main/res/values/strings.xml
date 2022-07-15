@@ -18,6 +18,8 @@
     <string name="addpost_cancel">Cancel</string>
     <string name="addpost_eventstart">Set Start</string>
     <string name="addpost_eventend">Set End</string>
+    <string name="addpost_nostartdate">No Start Date/Time Set!</string>
+    <string name="addpost_noenddate">No End Date/Time Set!</string>
     <string-array name="addpost_categories">
         <item>Tag 1</item>
         <item>Tag 2</item>
