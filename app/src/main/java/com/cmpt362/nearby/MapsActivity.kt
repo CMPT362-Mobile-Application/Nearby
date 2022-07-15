@@ -1,12 +1,22 @@
 package com.cmpt362.nearby
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.animation.Animation
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
+import com.cmpt362.nearby.activities.FilterActivity
 import com.cmpt362.nearby.animation.PinDetailAnimation
 import com.cmpt362.nearby.databinding.ActivityMapsBinding
+import com.cmpt362.nearby.fragments.PinDetailsFragment
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 
 
@@ -20,6 +30,20 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        //Ask for Permissions
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED
+            || ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED
+            || ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE),
+                0
+            )
+        }
+
         // Create the binding and set content view
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -30,6 +54,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+        binding.mainFilterButton.setOnClickListener{
+            val intent = Intent(this, FilterActivity::class.java).apply {
+
+            }
+            startActivity(intent)
+        }
     }
 
     /**
@@ -50,26 +81,49 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
         mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
 
-        mMap.setOnMapClickListener {
-            mMap.addMarker(MarkerOptions().position(it).title("Placed"))
-        }
-
         mMap.setOnMarkerClickListener {
-            println("debug: clicked")
-            var animation: Animation? = null
+
             if (detailActive) {
-                animation = PinDetailAnimation(binding.pinDetailFragmentContainer, 1000, 1)
-                println("debug: closed")
+                pinDetailsClose()
                 detailActive = false
             } else {
-                animation = PinDetailAnimation(binding.pinDetailFragmentContainer, 1000, 0)
-                println("debug: open")
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(it.position));
+                mMap.moveCamera(CameraUpdateFactory.zoomTo(15.0f));
+                pinDetailsOpen()
                 detailActive = true
             }
-            animation.duration = 1000
-            binding.pinDetailFragmentContainer.startAnimation(animation)
 
             return@setOnMarkerClickListener true
         }
+    }
+
+    private fun pinDetailsOpen() {
+        //Zoom on the pin selected
+        val newFragment: Fragment = PinDetailsFragment()
+        val ft: FragmentTransaction = supportFragmentManager.beginTransaction()
+        ft.add(R.id.pin_detail_fragment_container, newFragment).commit()
+        var animation: Animation? = null
+        animation = PinDetailAnimation(binding.pinDetailFragmentContainer, 1000, 0)
+        animation.duration = 1000
+        mMap.uiSettings.isScrollGesturesEnabled = false;
+        mMap.uiSettings.isRotateGesturesEnabled = false;
+        mMap.uiSettings.isZoomControlsEnabled = false;
+        mMap.uiSettings.isZoomGesturesEnabled = false;
+        mMap.uiSettings.isTiltGesturesEnabled = false;
+        mMap.uiSettings.isScrollGesturesEnabledDuringRotateOrZoom = false;
+        binding.pinDetailFragmentContainer.startAnimation(animation)
+    }
+    private fun pinDetailsClose() {
+        var animation: Animation? = null
+        animation = PinDetailAnimation(binding.pinDetailFragmentContainer, 1000, 1)
+        animation.duration = 1000
+        mMap.uiSettings.isScrollGesturesEnabled = true;
+        mMap.uiSettings.isScrollGesturesEnabled = true;
+        mMap.uiSettings.isRotateGesturesEnabled = true;
+        mMap.uiSettings.isZoomControlsEnabled = true;
+        mMap.uiSettings.isZoomGesturesEnabled = true;
+        mMap.uiSettings.isTiltGesturesEnabled = true;
+        mMap.uiSettings.isScrollGesturesEnabledDuringRotateOrZoom = true;
+        binding.pinDetailFragmentContainer.startAnimation(animation)
     }
 }
