@@ -23,6 +23,7 @@
             android:padding="16dp">
 
             <Button
+                android:id="@+id/addpost_addimagebutton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/addpost_addimage"/>
@@ -40,6 +41,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/addpost_name"
                 android:hint="@string/addpost_name"
+                android:inputType="text"
                 android:lines="1"
                 android:maxLines="1"/>
         </com.google.android.material.textfield.TextInputLayout>
@@ -129,6 +131,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/addpost_location"
                 android:hint="@string/addpost_location"
+                android:inputType="text"
                 android:lines="1"
                 android:maxLines="1"/>
         </com.google.android.material.textfield.TextInputLayout>
@@ -142,8 +145,10 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/addpost_description"
                 android:hint="@string/addpost_description"
+                android:inputType="textMultiLine"
                 android:gravity="top"
-                android:lines="5" />
+                android:lines="5"
+                android:maxLines="5"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout
@@ -151,7 +156,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingStart="16dp"
-            android:paddingEnd="16dp">
+            android:paddingEnd="16dp"
+            android:layout_marginBottom="16dp">
 
             <Button
                 android:id="@+id/addpost_create"

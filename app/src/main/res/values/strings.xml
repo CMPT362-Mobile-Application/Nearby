@@ -20,6 +20,9 @@
     <string name="addpost_eventend">Set End</string>
     <string name="addpost_nostartdate">No Start Date/Time Set!</string>
     <string name="addpost_noenddate">No End Date/Time Set!</string>
+    <string name="addpost_addimagetitle">Choose Image Source</string>
+    <string name="addpost_camera">Use Camera</string>
+    <string name="addpost_gallery">Use Gallery</string>
     <string-array name="addpost_categories">
         <item>Tag 1</item>
         <item>Tag 2</item>

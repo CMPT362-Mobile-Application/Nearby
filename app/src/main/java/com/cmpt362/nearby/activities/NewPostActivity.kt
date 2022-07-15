@@ -1,7 +1,9 @@
 package com.cmpt362.nearby.activities
 
+import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -23,6 +25,7 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
     private lateinit var eventEndButton: Button
     private lateinit var eventStartTextView: TextView
     private lateinit var eventEndTextView: TextView
+    private lateinit var addImageButton: Button
 
     private lateinit var newPostViewModel: NewPostViewModel
     private val START_TEXT_KEY = "START TEXT KEY"
@@ -76,6 +79,12 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             showDateTimePicker()
         }
 
+        // Add image button
+        addImageButton = binding.addpostAddimagebutton
+        addImageButton.setOnClickListener {
+            showAddPhotoDialog()
+        }
+
         // Restore from saved instance state
         if (savedInstanceState?.getString(START_TEXT_KEY) != null)
             eventStartTextView.text = savedInstanceState.getString(START_TEXT_KEY)
@@ -83,6 +92,27 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             eventEndTextView.text = savedInstanceState.getString(END_TEXT_KEY)
 
         setContentView(binding.root)
+    }
+
+    fun showAddPhotoDialog() {
+        // Get strings for dialog
+        val options = arrayOf(
+            getString(R.string.addpost_camera),
+            getString(R.string.addpost_gallery)
+        )
+        val title = getString(R.string.addpost_addimagetitle)
+
+        // Create and show dialog
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(title)
+        builder.setItems(options, DialogInterface.OnClickListener() {
+            dialog, which ->
+            when (which) {
+                0 -> null // Camera option
+                1 -> null // Gallery option
+            }
+        })
+        builder.show()
     }
 
     fun showDateTimePicker() {
