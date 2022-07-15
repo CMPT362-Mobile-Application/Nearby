@@ -1,4 +1,4 @@
-package com.cmpt362co.genericproject.viewmodels
+package com.cmpt362.nearby.viewmodels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
