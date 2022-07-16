@@ -3,11 +3,13 @@ package com.cmpt362.nearby.activities
 import android.graphics.Color
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ListView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.ViewModelProvider
 import com.cmpt362.nearby.R
+import com.cmpt362.nearby.adapters.FavouriteListAdapter
 import com.cmpt362.nearby.databinding.ActivityFavouriteBinding
 import com.cmpt362.nearby.viewmodels.FavouriteViewModel
 
@@ -17,6 +19,8 @@ class FavouriteActivity : AppCompatActivity() {
     private lateinit var rightButton: Button
     private lateinit var title: TextView
     private lateinit var favouriteViewModel: FavouriteViewModel
+    private lateinit var favouriteListAdapter: FavouriteListAdapter
+    private lateinit var listView: ListView
 
     companion object {
         const val MYPOSTS_KEY = "myposts"
@@ -62,6 +66,12 @@ class FavouriteActivity : AppCompatActivity() {
             if (favouriteViewModel.state.value == MYPOSTS_KEY)
                 favouriteViewModel.state.value = FAVOURITES_KEY
         }
+
+        // Initiate List View
+        listView = binding.favouriteListView
+        favouriteListAdapter = FavouriteListAdapter(this)
+        listView.adapter = favouriteListAdapter
+
 
         setContentView(binding.root)
     }
