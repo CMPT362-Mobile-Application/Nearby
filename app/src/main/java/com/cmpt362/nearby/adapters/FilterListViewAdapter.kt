@@ -1,11 +1,11 @@
-package com.cmpt362co.genericproject.adapters
+package com.cmpt362.nearby.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
-import com.cmpt362co.genericproject.databinding.AdapterFilterTagsListBinding
+import com.cmpt362.nearby.databinding.AdapterFilterTagsListBinding
 
 class FilterListViewAdapter(private val context: Context,
                             private var data: ArrayList<String>): BaseAdapter() {

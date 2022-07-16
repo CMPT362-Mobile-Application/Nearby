@@ -1,9 +1,8 @@
-package com.cmpt362co.genericproject
+package com.cmpt362.nearby
 
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Insets.add
 import android.os.Bundle
 import android.view.animation.Animation
 import androidx.appcompat.app.AppCompatActivity
@@ -11,10 +10,10 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
-import com.cmpt362co.genericproject.activities.FilterActivity
-import com.cmpt362co.genericproject.animation.PinDetailAnimation
-import com.cmpt362co.genericproject.databinding.ActivityMapsBinding
-import com.cmpt362co.genericproject.fragments.PinDetailsFragment
+import com.cmpt362.nearby.activities.FilterActivity
+import com.cmpt362.nearby.animation.PinDetailAnimation
+import com.cmpt362.nearby.databinding.ActivityMapsBinding
+import com.cmpt362.nearby.fragments.PinDetailsFragment
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker

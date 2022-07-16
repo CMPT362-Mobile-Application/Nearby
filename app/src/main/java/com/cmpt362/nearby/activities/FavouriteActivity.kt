@@ -1,4 +1,4 @@
-package com.cmpt362co.genericproject.activities
+package com.cmpt362.nearby.activities
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

@@ -1,17 +1,15 @@
-package com.cmpt362co.genericproject.activities
+package com.cmpt362.nearby.activities
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.view.View
-import android.widget.AdapterView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import com.cmpt362co.genericproject.adapters.FilterListViewAdapter
-import com.cmpt362co.genericproject.databinding.ActivityFilterBinding
-import com.cmpt362co.genericproject.viewmodels.FilterViewModel
+import com.cmpt362.nearby.adapters.FilterListViewAdapter
+import com.cmpt362.nearby.databinding.ActivityFilterBinding
+import com.cmpt362.nearby.viewmodels.FilterViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
