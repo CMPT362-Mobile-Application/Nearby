@@ -9,7 +9,7 @@
         android:title="new post"
         android:icon="@drawable/cross_white" />
     <item
-        android:id="app_bar_favourite"
+        android:id="@+id/app_bar_favourite"
         android:title="favourites"
         android:icon="@drawable/heart_white" />
 </menu>
