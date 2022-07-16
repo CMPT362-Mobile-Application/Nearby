@@ -99,9 +99,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
 
     private fun pinDetailsOpen() {
         //Zoom on the pin selected
-        val newFragment: Fragment = PinDetailsFragment()
-        val ft: FragmentTransaction = supportFragmentManager.beginTransaction()
-        ft.add(R.id.pin_detail_fragment_container, newFragment).commit()
+        val detailsFragment = PinDetailsFragment()
+        val fragmentTransaction = supportFragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.pin_detail_fragment_container, detailsFragment).commit()
+
         var animation: Animation? = null
         animation = PinDetailAnimation(binding.pinDetailFragmentContainer, 1000, 0)
         animation.duration = 1000
