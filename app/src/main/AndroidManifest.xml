@@ -34,7 +34,7 @@
             android:value="AIzaSyBFVUa7SbpYJWJ0DD-65VENfuxZwXJKTME" />
 
         <activity
-            android:name="com.cmpt362.nearby.MapsActivity"
+            android:name="com.cmpt362.nearby.activities.FavouriteActivity"
             android:exported="true"
             android:label="@string/title_activity_maps">
             <intent-filter>
