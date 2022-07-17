@@ -34,7 +34,7 @@
             android:value="AIzaSyBFVUa7SbpYJWJ0DD-65VENfuxZwXJKTME" />
 
         <activity
-            android:name="com.cmpt362.nearby.activities.FavouriteActivity"
+            android:name="com.cmpt362.nearby.MapsActivity"
             android:exported="true"
             android:label="@string/title_activity_maps">
             <intent-filter>
@@ -44,10 +44,20 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".activities.CommentActivity"
+            android:parentActivityName=".activities.CommentActivity" />
+        <activity
             android:name=".activities.FilterActivity"
             android:parentActivityName=".MapsActivity"
-            android:label="FilterActivity">
-        </activity>
+            android:label="Filter Posts" />
+        <activity
+            android:name=".activities.NewPostActivity"
+            android:parentActivityName=".MapsActivity"
+            android:label="New Post"/>
+        <activity
+            android:name=".activities.FavouriteActivity"
+            android:parentActivityName=".MapsActivity"
+            android:label="Saved Posts" />
     </application>
 
 </manifest>
