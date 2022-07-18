@@ -30,4 +30,8 @@
         <item>Tag 4</item>
         <item>Tag 5</item>
     </string-array>
+
+    <!-- Comment Activity/Fragment -->
+    <string name="reply">Reply</string>
+    <string name="post">Post</string>
 </resources>

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
+
     <fragment
         xmlns:map="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
@@ -12,50 +13,28 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/pin_detail_fragment_container"
-        android:layout_alignParentTop="true"
+        map:layout_constraintStart_toStartOf="parent"
+        map:layout_constraintEnd_toEndOf="parent"
+        map:layout_constraintTop_toTopOf="parent"
+        map:layout_constraintBottom_toTopOf="@id/map_nav_bar"
         tools:context=".MapsActivity" />
+
     <androidx.fragment.app.FragmentContainerView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_above="@+id/navBar"
-        android:id="@+id/pin_detail_fragment_container"/>
-    <LinearLayout
-        android:background="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/map_nav_bar"
+        android:id="@+id/pin_detail_fragment_container"
+        android:background="@color/black"/>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/map_nav_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_alignParentBottom="true"
-        android:id="@+id/navBar"
-        android:gravity="center_horizontal">
-        <ImageButton
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_weight="1"
-            android:scaleType="centerInside"
-            android:scaleY="0.7"
-            android:scaleX="0.7"
-            android:background="@null"
-            android:src="@drawable/funnel_white"
-            android:id="@+id/main_filter_button"/>
-        <ImageButton
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_weight="1"
-            android:scaleType="centerInside"
-            android:scaleY="0.7"
-            android:scaleX="0.7"
-            android:background="@null"
-            android:src="@drawable/cross_white"
-            android:id="@+id/main_post_button"/>
-        <ImageButton
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_weight="1"
-            android:scaleType="centerInside"
-            android:scaleY="0.7"
-            android:scaleX="0.7"
-            android:background="@null"
-            android:src="@drawable/heart_white"
-            android:id="@+id/main_favourite_button"/>
-    </LinearLayout>
-</RelativeLayout>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:menu="@menu/bottom_nav_menu" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

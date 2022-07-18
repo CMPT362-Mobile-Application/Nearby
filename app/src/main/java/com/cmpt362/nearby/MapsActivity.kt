@@ -10,7 +10,9 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import com.cmpt362.nearby.activities.FavouriteActivity
 import com.cmpt362.nearby.activities.FilterActivity
+import com.cmpt362.nearby.activities.NewPostActivity
 import com.cmpt362.nearby.animation.PinDetailAnimation
 import com.cmpt362.nearby.databinding.ActivityMapsBinding
 import com.cmpt362.nearby.fragments.PinDetailsFragment
@@ -18,6 +20,7 @@ import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.navigation.NavigationBarView
 
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
@@ -55,11 +58,23 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        binding.mainFilterButton.setOnClickListener{
-            val intent = Intent(this, FilterActivity::class.java).apply {
-
+        binding.mapNavBar.setOnItemSelectedListener {
+            when (it.itemId) {
+                R.id.app_bar_filter -> {
+                    startActivity(Intent(this, FilterActivity::class.java))
+                    return@setOnItemSelectedListener true
+                }
+                R.id.app_bar_new -> {
+                    startActivity(Intent(this, NewPostActivity::class.java))
+                    return@setOnItemSelectedListener true
+                }
+                R.id.app_bar_favourite -> {
+                    startActivity(Intent(this, FavouriteActivity::class.java))
+                    return@setOnItemSelectedListener true
+                }
+                else -> false
             }
-            startActivity(intent)
+
         }
     }
 
@@ -114,6 +129,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
         mMap.uiSettings.isScrollGesturesEnabledDuringRotateOrZoom = false;
         binding.pinDetailFragmentContainer.startAnimation(animation)
     }
+
     private fun pinDetailsClose() {
         var animation: Animation? = null
         animation = PinDetailAnimation(binding.pinDetailFragmentContainer, 1000, 1)
