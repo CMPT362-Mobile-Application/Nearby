@@ -2,11 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_margin="20dp"
     android:orientation="vertical" >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:weightSum="2"
         android:orientation="horizontal" >
 
         <TextView
@@ -14,31 +16,29 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="start"
-            android:text="comment id"/>
+            android:textColor="@color/grey"
+            android:gravity="start" />
 
         <TextView
             android:id="@+id/comment_time"
+            android:textColor="@color/grey"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="end"
-            android:text="date posted" />
+            android:gravity="end" />
 
     </LinearLayout>
 
     <TextView
         android:id="@+id/comment_reply_id"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:visibility="invisible"
-        android:layout_marginStart="20dp"
-        android:text="reply id" />
+        android:layout_height="wrap_content"
+        android:textColor="@color/teal_700"
+        android:layout_marginStart="20dp" />
 
     <TextView
         android:id="@+id/comment_info"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="comment" />
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

@@ -129,6 +129,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
         mMap.uiSettings.isScrollGesturesEnabledDuringRotateOrZoom = false;
         binding.pinDetailFragmentContainer.startAnimation(animation)
     }
+
     private fun pinDetailsClose() {
         var animation: Animation? = null
         animation = PinDetailAnimation(binding.pinDetailFragmentContainer, 1000, 1)
