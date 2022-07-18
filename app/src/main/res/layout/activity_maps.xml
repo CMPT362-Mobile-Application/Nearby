@@ -25,7 +25,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/map_nav_bar"
-        android:id="@+id/pin_detail_fragment_container" />
+        android:id="@+id/pin_detail_fragment_container"
+        android:background="?android:colorBackground"/>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/map_nav_bar"
