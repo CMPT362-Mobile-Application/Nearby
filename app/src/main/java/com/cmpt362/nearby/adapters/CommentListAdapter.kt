@@ -26,20 +26,19 @@ class CommentListAdapter(
     override fun onBindViewHolder(holder: CommentViewHolder, position: Int) {
         val comment = comments[position]
 
-        binding.commentId.text = comment.commentId.toString()
-        binding.commentTime.text = comment.time
+        binding.commentId.text = comment.id.toString()
+        binding.commentTime.text = comment.timeStamp.toString()
         binding.commentInfo.text = comment.info
 
-        // -1 is placeholder for no reply
         // if no reply, make the replyId textview invisible
-        if (comment.replyId > -1) {
-            binding.commentReplyId.text = String.format("> %d", comment.replyId)
+        if (comment.refId != Comment.NO_REF) {
+            binding.commentReplyId.text = String.format("> %d", comment.refId)
         } else {
             binding.commentReplyId.visibility = View.GONE
         }
 
         binding.root.setOnClickListener {
-            commentClickCallback(comment.commentId)
+            commentClickCallback(comment.id)
         }
     }
 

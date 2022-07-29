@@ -8,11 +8,11 @@ class FirestoreDatabase() {
     private val db = FirebaseFirestore.getInstance()
 
     fun getPost() {
-        val posts = db.collection("posts")
+        db.collection("posts")
             .get()
             .addOnSuccessListener {
                 for (document in it) {
-                    Log.d("firebase", "$document")
+                    Log.d("firebase", "${document.data.values}")
                 }
             }
 
