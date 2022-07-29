@@ -14,6 +14,7 @@ import com.cmpt362.nearby.activities.FavouriteActivity
 import com.cmpt362.nearby.activities.FilterActivity
 import com.cmpt362.nearby.activities.NewPostActivity
 import com.cmpt362.nearby.animation.PinDetailAnimation
+import com.cmpt362.nearby.database.FirestoreDatabase
 import com.cmpt362.nearby.databinding.ActivityMapsBinding
 import com.cmpt362.nearby.fragments.PinDetailsFragment
 import com.google.android.gms.maps.*
@@ -52,6 +53,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
         setContentView(binding.root)
         // Hides the top tool bar
         supportActionBar?.hide()
+
+        getData()
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
@@ -142,5 +145,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
         mMap.uiSettings.isTiltGesturesEnabled = true;
         mMap.uiSettings.isScrollGesturesEnabledDuringRotateOrZoom = true;
         binding.pinDetailFragmentContainer.startAnimation(animation)
+    }
+
+    private fun getData() {
+        val db = FirestoreDatabase()
+        db.getPost()
     }
 }

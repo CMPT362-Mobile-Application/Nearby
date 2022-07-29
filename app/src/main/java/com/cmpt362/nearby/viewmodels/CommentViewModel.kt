@@ -20,26 +20,26 @@ class CommentViewModel: ViewModel() {
         replyingTo.value = -1
 
         // This Portion should be removed when the data repository is added
-        commentList.value = arrayListOf(
-            Comment(99, "This is awesome! Can't Wait", "Time posted"),
-            Comment(102, "I will destroy all of you noobs", "Time posted"),
-            Comment(134, "No u", "Time posted", 102),
-            Comment(145, "You are going down first >.<", "Time posted", 102),
-            Comment(1111, "Same! I haven't played in a tournament for so long..",
-                "Time posted", 99),
-            Comment(1355, "Wario is the best", "Time posted", 102)
-        )
+//        commentList.value = arrayListOf(
+//            Comment(99, "This is awesome! Can't Wait", "Time posted"),
+//            Comment(102, "I will destroy all of you noobs", "Time posted"),
+//            Comment(134, "No u", "Time posted", 102),
+//            Comment(145, "You are going down first >.<", "Time posted", 102),
+//            Comment(1111, "Same! I haven't played in a tournament for so long..",
+//                "Time posted", 99),
+//            Comment(1355, "Wario is the best", "Time posted", 102)
+//        )
 
     }
 
-    fun addComment(commentTxt: String) {
-        // TODO: convert to local time string
-        val time = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CANADA)
-            .format(Calendar.getInstance().time)
-
-        val comment = Comment(++latestCommentId, commentTxt, time)
-        commentList.value?.add(comment)
-        // let the observer know that the list has changed
-        commentList.value = commentList.value
-    }
+//    fun addComment(commentTxt: String) {
+//        // TODO: convert to local time string
+//        val time = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CANADA)
+//            .format(Calendar.getInstance().time)
+//
+//        val comment = Comment(++latestCommentId, commentTxt, time)
+//        commentList.value?.add(comment)
+//        // let the observer know that the list has changed
+//        commentList.value = commentList.value
+//    }
 }

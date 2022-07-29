@@ -31,7 +31,7 @@ class NewCommentFragment() : Fragment(R.layout.fragment_new_comment) {
             if (it.isVisible) { commentViewModel.replyingTo.value = -1 }
         }
         binding.newCommentBtn.setOnClickListener {
-            commentViewModel.addComment(binding.newCommentEdittext.text.toString())
+//            commentViewModel.addComment(binding.newCommentEdittext.text.toString())
         }
 
         return binding.root
