@@ -10,14 +10,14 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 class CommentViewModel: ViewModel() {
-    val replyingTo = MutableLiveData<Long>()
+    val replyingTo = MutableLiveData<String?>()
     val commentList: MutableLiveData<ArrayList<Comment>> =
         MutableLiveData(arrayListOf())
     // should be controlled by database
     private var latestCommentId : Long = 1355
 
     init {
-        replyingTo.value = -1
+        replyingTo.value = null
 
         // This Portion should be removed when the data repository is added
 //        commentList.value = arrayListOf(

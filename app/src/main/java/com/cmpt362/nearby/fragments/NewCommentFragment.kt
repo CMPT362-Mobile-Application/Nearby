@@ -28,7 +28,7 @@ class NewCommentFragment() : Fragment(R.layout.fragment_new_comment) {
         }
 
         binding.newCommentReply.setOnClickListener {
-            if (it.isVisible) { commentViewModel.replyingTo.value = -1 }
+            if (it.isVisible) { commentViewModel.replyingTo.value = null }
         }
         binding.newCommentBtn.setOnClickListener {
 //            commentViewModel.addComment(binding.newCommentEdittext.text.toString())
@@ -38,10 +38,10 @@ class NewCommentFragment() : Fragment(R.layout.fragment_new_comment) {
     }
 
 
-    fun setReplyingTo(id: Long) {
-        if (id > -1) {
+    fun setReplyingTo(id: String?) {
+        if (id != null) {
             binding.newCommentBtn.text = getString(R.string.reply)
-            binding.newCommentReply.text = String.format("X replying to %d", id)
+            binding.newCommentReply.text = String.format("X replying to %s", id)
             binding.newCommentReply.visibility = View.VISIBLE
         } else {
             binding.newCommentBtn.text = getString(R.string.post)
