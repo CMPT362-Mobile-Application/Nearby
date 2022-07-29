@@ -1,19 +1,16 @@
 package com.cmpt362.nearby.classes
+import com.google.firebase.Timestamp
+import java.util.*
+
+private val NO_REFERENCE = -1L
 
 // TODO: make comment use epoch timestamp as it is the method of storage for firebase
-class Comment(val commentId: Long,
-              val commentInfo: String,
-              val dtime: String,
-              val replyTo: Long = -1) {
-    val id: Long
-    val info: String
-    val time: String
-    val replyId: Long
-
-    init {
-        id = commentId
-        info = commentInfo
-        time = dtime
-        replyId = replyTo
+class Comment(
+    val id: Long,
+    val info: String,
+    val timeStamp: Timestamp = Timestamp(Calendar.getInstance().time),
+    val refId: Long = NO_REFERENCE) {
+    companion object {
+        val NO_REF = NO_REFERENCE
     }
 }
