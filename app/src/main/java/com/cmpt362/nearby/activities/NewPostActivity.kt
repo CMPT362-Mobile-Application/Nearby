@@ -43,6 +43,8 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
     private lateinit var imageView: ImageView
     private lateinit var setLocationButton: Button
     private lateinit var currLocationTextView: TextView
+    private lateinit var createButton: Button
+    private lateinit var cancelButton: Button
 
     private lateinit var newPostViewModel: NewPostViewModel
     private val START_TEXT_KEY = "START TEXT KEY"
@@ -178,6 +180,19 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             openSetLocationActivity()
         }
 
+        // Create Button
+        createButton = binding.addpostCreate
+        createButton.setOnClickListener {
+            createPost()
+            finish()
+        }
+
+        // Cancel Button
+        cancelButton = binding.addpostCancel
+        cancelButton.setOnClickListener {
+            finish()
+        }
+
         // Restore from saved instance state
         if (savedInstanceState?.getString(START_TEXT_KEY) != null)
             eventStartTextView.text = savedInstanceState.getString(START_TEXT_KEY)
@@ -274,6 +289,10 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             val dateTime = dateFormat.format(newPostViewModel.endCalendar.value?.time!!)
             eventEndTextView.text = dateTime
         }
+    }
+
+    private fun createPost() {
+        
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
