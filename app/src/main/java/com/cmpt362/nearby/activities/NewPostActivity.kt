@@ -10,6 +10,8 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.graphics.Matrix
+import android.location.Criteria
+import android.location.LocationManager
 import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
@@ -23,8 +25,10 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModelProvider
 import com.cmpt362.nearby.R
+import com.cmpt362.nearby.classes.Post
 import com.cmpt362.nearby.databinding.ActivityNewPostBinding
 import com.cmpt362.nearby.viewmodels.NewPostViewModel
+import com.google.firebase.firestore.GeoPoint
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -183,8 +187,9 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
         // Create Button
         createButton = binding.addpostCreate
         createButton.setOnClickListener {
-            createPost()
-            finish()
+            if(createPost()) {
+                finish()
+            }
         }
 
         // Cancel Button
@@ -291,8 +296,71 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
         }
     }
 
-    private fun createPost() {
-        
+    private fun createPost(): Boolean {
+        // Grab text fields
+        val userid = "" // Where is the user id stored?
+        val title = binding.addpostName.text.toString()
+        val info = binding.addpostDescription.text.toString()
+
+        if (title.isEmpty()) {
+            Toast.makeText(this, R.string.addpost_toast_notitle, Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        // Image
+        val imageBitmap = newPostViewModel.imageBitmap.value
+        if (imageBitmap == null) {
+            Toast.makeText(this, R.string.addpost_toast_noimage, Toast.LENGTH_SHORT).show()
+            return false
+        }
+        // This should probably be uploaded at this point to Firebase, then get the URL
+        val imageURL = ""
+
+        // Category
+        // TODO: Alex needs to implement this
+
+        // Event data
+        val isEvent = eventSwitch.isChecked
+        val startTime = newPostViewModel.startCalendar.value?.timeInMillis
+        val endTime = newPostViewModel.endCalendar.value?.timeInMillis
+
+        if (isEvent) {
+            if (eventStartTextView.text.toString() == getString(R.string.addpost_nostartdate)) {
+                Toast.makeText(this, R.string.addpost_toast_nostart, Toast.LENGTH_SHORT).show()
+                return false
+            } else if (eventEndTextView.text.toString() == getString(R.string.addpost_noenddate)) {
+                Toast.makeText(this, R.string.addpost_toast_noend, Toast.LENGTH_SHORT).show()
+                return false
+            }
+        }
+
+        // Location
+        var latitude = newPostViewModel.latitude.value
+        var longitude = newPostViewModel.longitude.value
+        if (latitude == 0.0 || longitude == 0.0) { // Get current location
+            try {
+                val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
+                val criteria = Criteria()
+                criteria.accuracy = Criteria.ACCURACY_FINE
+                val provider = locationManager.getBestProvider(criteria, true)
+                val location = locationManager.getLastKnownLocation(provider!!)
+                latitude = location?.latitude
+                longitude = location?.longitude
+            } catch (e: SecurityException) {
+                Toast.makeText(this, R.string.addpost_toast_location, Toast.LENGTH_SHORT).show()
+                return false
+            }
+        }
+        if (latitude == null || longitude == null) {
+            Toast.makeText(this, R.string.addpost_toast_location, Toast.LENGTH_SHORT).show()
+            return false
+        }
+        val geoPoint = GeoPoint(latitude, longitude)
+
+        // Create Post object to upload to Firebase
+        val newPost = Post(userid, title, geoPoint, info)
+
+        return true
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

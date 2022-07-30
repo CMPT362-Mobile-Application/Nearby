@@ -31,6 +31,11 @@
         <item>Tag 4</item>
         <item>Tag 5</item>
     </string-array>
+    <string name="addpost_toast_notitle">Please add a title.</string>
+    <string name="addpost_toast_noimage">Please add an image.</string>
+    <string name="addpost_toast_nostart">Please set the Start date.</string>
+    <string name="addpost_toast_noend">Please set the End date.</string>
+    <string name="addpost_toast_location">Error with location.</string>
 
     <!--  Choose Location Activity  -->
     <string name="chooselocation_save">Save</string>

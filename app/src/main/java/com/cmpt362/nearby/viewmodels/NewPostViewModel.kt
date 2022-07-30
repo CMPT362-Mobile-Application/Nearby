@@ -14,7 +14,8 @@ class NewPostViewModel: ViewModel() {
     val longitude = MutableLiveData<Double>(0.0)
 
     init {
-        startCalendar.value = Calendar.getInstance()
-        endCalendar.value = Calendar.getInstance()
+        val cal = Calendar.getInstance()
+        startCalendar.value = cal
+        endCalendar.value = cal
     }
 }
