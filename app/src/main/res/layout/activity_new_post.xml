@@ -143,19 +143,26 @@
 
         </RelativeLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp">
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
+
+            <Button
+                android:id="@+id/addpost_setlocation"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/addpost_location"
-                android:hint="@string/addpost_location"
-                android:inputType="text"
-                android:lines="1"
-                android:maxLines="1"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                android:text="@string/addpost_location"/>
+
+            <TextView
+                android:id="@+id/addpost_currlocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerInParent="true"
+                android:text="@string/addpost_currlocation"
+                android:textSize="16sp"/>
+        </RelativeLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"

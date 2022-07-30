@@ -12,7 +12,8 @@
     <string name="addpost_name">Name</string>
     <string name="addpost_category">Category</string>
     <string name="addpost_event">Is Event?</string>
-    <string name="addpost_location">Location</string>
+    <string name="addpost_location">Set Location</string>
+    <string name="addpost_currlocation">Using Current Location</string>
     <string name="addpost_description">Description</string>
     <string name="addpost_create">Create</string>
     <string name="addpost_cancel">Cancel</string>
@@ -30,6 +31,11 @@
         <item>Tag 4</item>
         <item>Tag 5</item>
     </string-array>
+
+    <!--  Choose Location Activity  -->
+    <string name="chooselocation_save">Save</string>
+    <string name="chooselocation_cancel">Cancel</string>
+    <string name="chooselocation_toast">Location set.</string>
 
     <!-- Comment Activity/Fragment -->
     <string name="reply">Reply</string>

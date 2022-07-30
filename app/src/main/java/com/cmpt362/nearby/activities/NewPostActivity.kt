@@ -41,16 +41,21 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
     private lateinit var eventEndTextView: TextView
     private lateinit var addImageButton: Button
     private lateinit var imageView: ImageView
+    private lateinit var setLocationButton: Button
+    private lateinit var currLocationTextView: TextView
 
     private lateinit var newPostViewModel: NewPostViewModel
     private val START_TEXT_KEY = "START TEXT KEY"
     private val END_TEXT_KEY = "END TEXT KEY"
+    private val LOCATION_TEXT_KEY = "LOCATION TEXT KEY"
 
     private lateinit var cameraImgUri: Uri
     private lateinit var cameraImgFile: File
     private val cameraFileName = "camera.jpg"
     private lateinit var cameraResult: ActivityResultLauncher<Intent>
     private lateinit var galleryResult: ActivityResultLauncher<Intent>
+
+    private lateinit var locationResult: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -149,10 +154,28 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             }
         }
 
+        // On Choose Location Result
+        locationResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK && it.data != null) {
+                val lat = it.data?.getDoubleExtra("latitude", 0.0)
+                val lng = it.data?.getDoubleExtra("longitude", 0.0)
+                newPostViewModel.latitude.value = lat
+                newPostViewModel.longitude.value = lng
+                currLocationTextView.text = "${String.format("%.5f", lat)}, ${String.format("%.5f", lng)}"
+            }
+        }
+
         // Listen for image bitmap changes
         imageView = binding.addpostImageview
         newPostViewModel.imageBitmap.observe(this) {
             imageView.setImageBitmap(it)
+        }
+
+        // Set Location Button
+        setLocationButton = binding.addpostSetlocation
+        currLocationTextView = binding.addpostCurrlocation
+        setLocationButton.setOnClickListener {
+            openSetLocationActivity()
         }
 
         // Restore from saved instance state
@@ -160,6 +183,8 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             eventStartTextView.text = savedInstanceState.getString(START_TEXT_KEY)
         if (savedInstanceState?.getString(END_TEXT_KEY) != null)
             eventEndTextView.text = savedInstanceState.getString(END_TEXT_KEY)
+        if (savedInstanceState?.getString(LOCATION_TEXT_KEY) != null)
+            currLocationTextView.text = savedInstanceState.getString(LOCATION_TEXT_KEY)
 
         setContentView(binding.root)
     }
@@ -197,6 +222,11 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
         val intent = Intent(Intent.ACTION_PICK)
         intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
         galleryResult.launch(intent)
+    }
+
+    fun openSetLocationActivity() {
+        val intent = Intent(this, ChooseLocationActivity::class.java)
+        locationResult.launch(intent)
     }
 
     fun showDateTimePicker() {
@@ -250,5 +280,6 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
         super.onSaveInstanceState(outState)
         outState.putString(START_TEXT_KEY, eventStartTextView.text.toString())
         outState.putString(END_TEXT_KEY, eventEndTextView.text.toString())
+        outState.putString(LOCATION_TEXT_KEY, currLocationTextView.text.toString())
     }
 }
