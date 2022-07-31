@@ -20,13 +20,13 @@ enum class Color(val value: Int) {
 }
 
 class Post(
-    val userId : String,
-    val title : String,
-    val location: GeoPoint,
-    val info: String,
-    val tag: String,
+    val userId : String = "",
+    val title : String = "",
+    val location: GeoPoint = GeoPoint(0.0, 0.0),
+    val info: String = "",
+    val tag: String = "",
     val imageUrl: String = "",
     val iconType: IconType = IconType.NONE,
     val iconColor: Color = Color.GREY,
-    val comments: ArrayList<Comment> = arrayListOf()
+    val isEvent: Boolean = false
 )

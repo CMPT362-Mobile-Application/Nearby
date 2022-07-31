@@ -17,6 +17,7 @@ import com.cmpt362.nearby.animation.PinDetailAnimation
 import com.cmpt362.nearby.database.FirestoreDatabase
 import com.cmpt362.nearby.databinding.ActivityMapsBinding
 import com.cmpt362.nearby.fragments.PinDetailsFragment
+import com.cmpt362.nearby.viewmodels.PostsViewModel
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
@@ -57,7 +58,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
         // Hides the top tool bar
         supportActionBar?.hide()
 
-        getData()
+        //getData()
+        var postsViewModel = PostsViewModel()
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
