@@ -5,16 +5,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.cmpt362.nearby.classes.Comment
+import com.cmpt362.nearby.classes.Util
 import com.cmpt362.nearby.databinding.AdapterCommentBinding
 
 class CommentListAdapter(
-    var comments: ArrayList<Comment>,
-    val commentClickCallback: (String?) -> Unit
+    private var comments: ArrayList<Comment>,
+    val commentClickCallback: (Long) -> Unit
 ) : RecyclerView.Adapter<CommentListAdapter.CommentViewHolder>() {
 
     private lateinit var binding: AdapterCommentBinding
 
-    class CommentViewHolder(private val binding: AdapterCommentBinding) :
+    class CommentViewHolder(binding: AdapterCommentBinding) :
         RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
@@ -26,13 +27,13 @@ class CommentListAdapter(
     override fun onBindViewHolder(holder: CommentViewHolder, position: Int) {
         val comment = comments[position]
 
-        binding.commentId.text = comment.id
-        binding.commentTime.text = comment.timeStamp.toString()
+        binding.commentId.text = comment.id.toString()
+        binding.commentTime.text = Util.timestampToDateStr(comment.timestamp)
         binding.commentInfo.text = comment.info
 
         // if no reply, make the replyId textview invisible for the comment item
-        if (comment.refId != null) {
-            binding.commentReplyId.text = String.format("> %s", comment.refId)
+        if (comment.replyId != Comment.NO_REF) {
+            binding.commentReplyId.text = String.format("> %d", comment.replyId)
         } else {
             binding.commentReplyId.visibility = View.GONE
         }

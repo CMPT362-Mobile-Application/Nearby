@@ -15,11 +15,13 @@ class PinDetailsFragment() : Fragment(R.layout.fragment_pin_details) {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val binding = FragmentPinDetailsBinding.inflate(inflater, container, false)
 
         binding.pinDetailComment.setOnClickListener {
-            startActivity(Intent(activity, CommentActivity::class.java))
+            val intent = Intent(activity, CommentActivity::class.java)
+            intent.putExtra("postId", "PlHWFSl0brbE2RrcBTTo")
+            startActivity(intent)
         }
 
         return binding.root

@@ -54,8 +54,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
         // Hides the top tool bar
         supportActionBar?.hide()
 
-        getData()
-
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
@@ -147,8 +145,4 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
         binding.pinDetailFragmentContainer.startAnimation(animation)
     }
 
-    private fun getData() {
-        val db = FirestoreDatabase()
-        db.getPost()
-    }
 }
