@@ -14,7 +14,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.cmpt362.nearby.R
 import com.cmpt362.nearby.databinding.ActivityChooseLocationBinding
 import com.cmpt362.nearby.viewmodels.ChooseLocationViewModel
-import com.cmpt362.nearby.viewmodels.NewPostViewModel
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker

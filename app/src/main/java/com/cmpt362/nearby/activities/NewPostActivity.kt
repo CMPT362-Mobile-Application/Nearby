@@ -23,7 +23,6 @@ import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModelProvider
 import com.cmpt362.nearby.R
@@ -34,10 +33,8 @@ import com.cmpt362.nearby.databinding.ActivityNewPostBinding
 import com.cmpt362.nearby.viewmodels.NewPostViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
-//import com.google.firebase.storage.FirebaseStorage
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -324,8 +321,8 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
         var icon : IconType = IconType.FOOD
         var color : Color = Color.BLUE
         if (binding.addpostCategoryspinner.selectedItemPosition < IconType.values().size) {
-            icon = IconType.getByValue(binding.addpostCategoryspinner.selectedItemPosition)!!
-            color = Color.getByValue(binding.addpostCategoryspinner.selectedItemPosition)!!
+            icon = IconType.fromInt(binding.addpostCategoryspinner.selectedItemPosition)!!
+            color = Color.fromInt(binding.addpostCategoryspinner.selectedItemPosition)!!
         }
 
         // Event data

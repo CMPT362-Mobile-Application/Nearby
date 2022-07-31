@@ -10,6 +10,6 @@ enum class IconType(val value: Int) {
 enum class Color(val value: Int) {
     GREY(0), RED(1), GREEN(2), BLUE(3);
     companion object {
-        fun fromInt(value: Int) = IconType.values().first{ it.value == value }
+        fun fromInt(value: Int) = Color.values().first{ it.value == value }
     }
 }

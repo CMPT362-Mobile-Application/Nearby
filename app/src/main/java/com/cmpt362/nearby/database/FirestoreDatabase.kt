@@ -4,6 +4,8 @@ import android.util.Log
 import com.cmpt362.nearby.classes.Comment
 import com.cmpt362.nearby.classes.Post
 import com.google.firebase.database.DataSnapshot
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlin.properties.Delegates
@@ -17,20 +19,21 @@ class FirestoreDatabase {
     private val COMMENT_COUNT = "counter"
     private val COMMENT_ITEMS = "items"
 
-    fun getPosts(private var filter: DbFilter = nul) {
+    fun getPosts(): CollectionReference {
+        return db.collection(POSTS)
         // apply a default filter if none is set
-        if (filter == null) {
-            filter = DbFilter.Builder().build()
-        }
-
-        val posts = arrayListOf<Post>()
-        filter.getQuery(db.collection(POSTS))
-            .get()
-            .addOnSuccessListener {
-                for (document in it) {
-                    posts.add(document.toObject(Post::class.java))
-                }
-            }
+//        if (filter == null) {
+//            filter = DbFilter.Builder().build()
+//        }
+//
+//        val posts = arrayListOf<Post>()
+//        filter.getQuery(db.collection(POSTS))
+//            .get()
+//            .addOnSuccessListener {
+//                for (document in it) {
+//                    posts.add(document.toObject(Post::class.java))
+//                }
+//            }
         //            .addOnSuccessListener {
         //                val firestorePosts: ArrayList<Post> = arrayListOf()
         //                for (document in it) {

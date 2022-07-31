@@ -10,8 +10,8 @@ class NewPostViewModel: ViewModel() {
     val endCalendar = MutableLiveData<Calendar>()
     val startOrEnd = MutableLiveData<String>()
     val imageBitmap = MutableLiveData<Bitmap>()
-    val latitude = MutableLiveData<Double>(0.0)
-    val longitude = MutableLiveData<Double>(0.0)
+    val latitude = MutableLiveData(0.0)
+    val longitude = MutableLiveData(0.0)
 
     init {
         val cal = Calendar.getInstance()

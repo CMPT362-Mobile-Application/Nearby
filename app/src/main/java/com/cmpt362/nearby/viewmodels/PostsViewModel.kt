@@ -1,6 +1,5 @@
 package com.cmpt362.nearby.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.cmpt362.nearby.classes.Post
 import com.cmpt362.nearby.database.FirestoreDatabase
@@ -13,7 +12,7 @@ class PostsViewModel {
 
     init {
         val firestore = FirestoreDatabase()
-        docRef = firestore.getPost()
+        docRef = firestore.getPosts()
         docRef.get().addOnSuccessListener { documentSnapshot ->
             for (document in documentSnapshot) {
                 postsList.value?.add(document.toObject(Post::class.java))

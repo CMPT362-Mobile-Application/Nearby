@@ -25,7 +25,7 @@ class DbFilter private constructor (
     fun getQuery(collection: CollectionReference): Query {
         var query: Query = collection
 
-        if (!tags.isEmpty()) {
+        if (tags.isNotEmpty()) {
             query = query.whereArrayContains("tags", tags)
         }
         if (earliestTime != null) {
