@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -22,13 +23,33 @@
             android:orientation="horizontal"
             android:padding="16dp">
 
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
             <Button
                 android:id="@+id/addpost_addimagebutton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:text="@string/addpost_addimage"/>
 
-        <!-- Will we be adding an ImageView here for a preview? -->
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:scaleType="centerCrop"
+                android:id="@+id/addpost_imageview"/>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
         </LinearLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -122,19 +143,26 @@
 
         </RelativeLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp">
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
+
+            <Button
+                android:id="@+id/addpost_setlocation"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/addpost_location"
-                android:hint="@string/addpost_location"
-                android:inputType="text"
-                android:lines="1"
-                android:maxLines="1"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                android:text="@string/addpost_location"/>
+
+            <TextView
+                android:id="@+id/addpost_currlocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerInParent="true"
+                android:text="@string/addpost_currlocation"
+                android:textSize="16sp"/>
+        </RelativeLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"

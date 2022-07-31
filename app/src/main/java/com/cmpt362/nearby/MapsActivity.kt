@@ -17,6 +17,7 @@ import com.cmpt362.nearby.animation.PinDetailAnimation
 import com.cmpt362.nearby.database.FirestoreDatabase
 import com.cmpt362.nearby.databinding.ActivityMapsBinding
 import com.cmpt362.nearby.fragments.PinDetailsFragment
+import com.cmpt362.nearby.viewmodels.PostsViewModel
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
@@ -40,10 +41,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
             || ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED
             || ContextCompat.checkSelfPermission(this,
-                Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+            || ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
                 this,
-                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE),
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.ACCESS_FINE_LOCATION),
                 0
             )
         }
@@ -53,6 +57,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
         setContentView(binding.root)
         // Hides the top tool bar
         supportActionBar?.hide()
+
+        var postsViewModel = PostsViewModel()
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager

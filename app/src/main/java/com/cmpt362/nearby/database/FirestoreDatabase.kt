@@ -17,9 +17,9 @@ class FirestoreDatabase {
     private val COMMENT_COUNT = "counter"
     private val COMMENT_ITEMS = "items"
 
-    fun getPosts() {
+    fun getPosts(private var filter: DbFilter = nul) {
         // apply a default filter if none is set
-        if (this::filter.isInitialized) {
+        if (filter == null) {
             filter = DbFilter.Builder().build()
         }
 
@@ -31,17 +31,39 @@ class FirestoreDatabase {
                     posts.add(document.toObject(Post::class.java))
                 }
             }
+        //            .addOnSuccessListener {
+        //                val firestorePosts: ArrayList<Post> = arrayListOf()
+        //                for (document in it) {
+        //                    val post = document.toObject(Post::class.java)
+        //                    firestorePosts.add(post)
+        //                    Log.d("firebase", "$post")
+        //                }
+        //                return@addOnSuccessListener
+        //            }
+        //            .addOnFailureListener { e ->
+        //                Log.w("firebase", "Error receiving posts", e)
+        //            }
     }
 
     fun addPost(entry: Post) {
-        val postId=""
-        // when creating a new post, also make a new document for comments with the same id
-        db.collection(COMMENTS).document(postId).set(
-            hashMapOf(
-                COMMENT_COUNT to 0L,
-                COMMENT_ITEMS to arrayListOf<Comment>()
-            )
-        )
+        db.collection("posts")
+            .add(entry)
+            .addOnSuccessListener { documentReference ->
+               
+                val postId="$documentReference.id"
+                Log.d("firebase", "DocumentSnapshot written with ID: $postId")
+                
+                // when creating a new post, also make a new document for comments with the same id
+                db.collection(COMMENTS).document(postId).set(
+                    hashMapOf(
+                        COMMENT_COUNT to 0L,
+                        COMMENT_ITEMS to arrayListOf<Comment>()
+                    )
+                )}
+            .addOnFailureListener { e ->
+                Log.w("firebase", "Error adding document", e)
+            }
+
 
     }
 
@@ -84,4 +106,5 @@ class FirestoreDatabase {
         val itemCount: Long = 0L,
         val items: ArrayList<Comment> = arrayListOf()
     )
+
 }

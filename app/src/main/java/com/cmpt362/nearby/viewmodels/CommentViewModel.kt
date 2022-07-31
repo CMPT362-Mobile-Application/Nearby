@@ -35,4 +35,5 @@ class CommentViewModel(private val postId: String): ViewModel() {
         // retrieve the latest changes from the database
         getComments()
     }
+    
 }

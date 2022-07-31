@@ -9,10 +9,11 @@
     <!--  Add Post Activity  -->
     <string name="addpost_title">Add Post</string>
     <string name="addpost_addimage">Add Image</string>
-    <string name="addpost_name">Name</string>
+    <string name="addpost_name">Title</string>
     <string name="addpost_category">Category</string>
     <string name="addpost_event">Is Event?</string>
-    <string name="addpost_location">Location</string>
+    <string name="addpost_location">Set Location</string>
+    <string name="addpost_currlocation">Using Current Location</string>
     <string name="addpost_description">Description</string>
     <string name="addpost_create">Create</string>
     <string name="addpost_cancel">Cancel</string>
@@ -30,6 +31,16 @@
         <item>Tag 4</item>
         <item>Tag 5</item>
     </string-array>
+    <string name="addpost_toast_notitle">Please add a title.</string>
+    <string name="addpost_toast_noimage">Please add an image.</string>
+    <string name="addpost_toast_nostart">Please set the Start date.</string>
+    <string name="addpost_toast_noend">Please set the End date.</string>
+    <string name="addpost_toast_location">Error with location.</string>
+
+    <!--  Choose Location Activity  -->
+    <string name="chooselocation_save">Save</string>
+    <string name="chooselocation_cancel">Cancel</string>
+    <string name="chooselocation_toast">Location set.</string>
 
     <!-- Comment Activity/Fragment -->
     <string name="reply">Reply</string>
