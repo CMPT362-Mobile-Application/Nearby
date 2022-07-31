@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
@@ -17,6 +18,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.telephony.TelephonyManager
 import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -25,30 +27,21 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModelProvider
 import com.cmpt362.nearby.R
+import com.cmpt362.nearby.classes.Color
+import com.cmpt362.nearby.classes.IconType
 import com.cmpt362.nearby.classes.Post
 import com.cmpt362.nearby.databinding.ActivityNewPostBinding
 import com.cmpt362.nearby.viewmodels.NewPostViewModel
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
+import com.google.firebase.storage.FirebaseStorage
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
 class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
     private lateinit var binding: ActivityNewPostBinding
-    private lateinit var categorySpinner: Spinner
-    private lateinit var eventSwitch: SwitchCompat
-    private lateinit var eventStartLayout: RelativeLayout
-    private lateinit var eventEndLayout: RelativeLayout
-    private lateinit var eventStartButton: Button
-    private lateinit var eventEndButton: Button
-    private lateinit var eventStartTextView: TextView
-    private lateinit var eventEndTextView: TextView
-    private lateinit var addImageButton: Button
-    private lateinit var imageView: ImageView
-    private lateinit var setLocationButton: Button
-    private lateinit var currLocationTextView: TextView
-    private lateinit var createButton: Button
-    private lateinit var cancelButton: Button
 
     private lateinit var newPostViewModel: NewPostViewModel
     private val START_TEXT_KEY = "START TEXT KEY"
@@ -63,57 +56,55 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
 
     private lateinit var locationResult: ActivityResultLauncher<Intent>
 
+    private lateinit var db: FirebaseFirestore
+    private lateinit var cloudStorage: FirebaseStorage
+    private lateinit var deviceUUID: TelephonyManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityNewPostBinding.inflate(layoutInflater)
+        db = FirebaseFirestore.getInstance()
+        cloudStorage = FirebaseStorage.getInstance()
+        deviceUUID = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
 
         // Setup view model for storing date/time entry and state
         newPostViewModel = ViewModelProvider(this).get(NewPostViewModel::class.java)
 
         // Set up Category Spinner
-        categorySpinner = binding.addpostCategoryspinner
         ArrayAdapter.createFromResource(
             this,
             R.array.addpost_categories,
             android.R.layout.simple_spinner_item
         ).also { adapter ->
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            categorySpinner.adapter = adapter
+            binding.addpostCategoryspinner.adapter = adapter
         }
 
         // Set up Is Event toggle
-        eventSwitch = binding.addpostEvent
-        eventStartLayout = binding.addpostEventstartlayout
-        eventEndLayout = binding.addpostEventendlayout
-        eventStartTextView = binding.addpostEventstarttext
-        eventEndTextView = binding.addpostEventendtext
-        eventSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+        binding.addpostEvent.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
-                eventStartLayout.visibility = RelativeLayout.VISIBLE
-                eventEndLayout.visibility = RelativeLayout.VISIBLE
+                binding.addpostEventstartlayout.visibility = RelativeLayout.VISIBLE
+                binding.addpostEventendlayout.visibility = RelativeLayout.VISIBLE
             } else {
-                eventStartLayout.visibility = RelativeLayout.GONE
-                eventEndLayout.visibility = RelativeLayout.GONE
+                binding.addpostEventstartlayout.visibility = RelativeLayout.GONE
+                binding.addpostEventendlayout.visibility = RelativeLayout.GONE
             }
         }
 
         // Event Set Start button
-        eventStartButton = binding.addpostEventstartbutton
-        eventStartButton.setOnClickListener {
+        binding.addpostEventstartbutton.setOnClickListener {
             newPostViewModel.startOrEnd.value = "start"
             showDateTimePicker()
         }
 
         // Event set end button
-        eventEndButton = binding.addpostEventendbutton
-        eventEndButton.setOnClickListener {
+        binding.addpostEventendbutton.setOnClickListener {
             newPostViewModel.startOrEnd.value = "end"
             showDateTimePicker()
         }
 
         // Add image button
-        addImageButton = binding.addpostAddimagebutton
-        addImageButton.setOnClickListener {
+        binding.addpostAddimagebutton.setOnClickListener {
             showAddPhotoDialog()
         }
 
@@ -167,44 +158,39 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
                 val lng = it.data?.getDoubleExtra("longitude", 0.0)
                 newPostViewModel.latitude.value = lat
                 newPostViewModel.longitude.value = lng
-                currLocationTextView.text = "${String.format("%.5f", lat)}, ${String.format("%.5f", lng)}"
+                binding.addpostCurrlocation.text = "${String.format("%.5f", lat)}, ${String.format("%.5f", lng)}"
             }
         }
 
         // Listen for image bitmap changes
-        imageView = binding.addpostImageview
         newPostViewModel.imageBitmap.observe(this) {
-            imageView.setImageBitmap(it)
+            binding.addpostImageview.setImageBitmap(it)
         }
 
         // Set Location Button
-        setLocationButton = binding.addpostSetlocation
-        currLocationTextView = binding.addpostCurrlocation
-        setLocationButton.setOnClickListener {
+        binding.addpostSetlocation.setOnClickListener {
             openSetLocationActivity()
         }
 
         // Create Button
-        createButton = binding.addpostCreate
-        createButton.setOnClickListener {
+        binding.addpostCreate.setOnClickListener {
             if(createPost()) {
                 finish()
             }
         }
 
         // Cancel Button
-        cancelButton = binding.addpostCancel
-        cancelButton.setOnClickListener {
+        binding.addpostCancel.setOnClickListener {
             finish()
         }
 
         // Restore from saved instance state
         if (savedInstanceState?.getString(START_TEXT_KEY) != null)
-            eventStartTextView.text = savedInstanceState.getString(START_TEXT_KEY)
+            binding.addpostEventstarttext.text = savedInstanceState.getString(START_TEXT_KEY)
         if (savedInstanceState?.getString(END_TEXT_KEY) != null)
-            eventEndTextView.text = savedInstanceState.getString(END_TEXT_KEY)
+            binding.addpostEventendtext.text = savedInstanceState.getString(END_TEXT_KEY)
         if (savedInstanceState?.getString(LOCATION_TEXT_KEY) != null)
-            currLocationTextView.text = savedInstanceState.getString(LOCATION_TEXT_KEY)
+            binding.addpostCurrlocation.text = savedInstanceState.getString(LOCATION_TEXT_KEY)
 
         setContentView(binding.root)
     }
@@ -282,7 +268,7 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             val dateFormat = SimpleDateFormat("dd/MM/yyyy hh:mm aa", Locale.US)
             dateFormat.timeZone = newPostViewModel.startCalendar.value?.timeZone!!
             val dateTime = dateFormat.format(newPostViewModel.startCalendar.value?.time!!)
-            eventStartTextView.text = dateTime
+            binding.addpostEventstarttext.text = dateTime
         }
         else if (newPostViewModel.startOrEnd.value == "end") {
             newPostViewModel.endCalendar.value?.set(Calendar.HOUR_OF_DAY, hourOfDay)
@@ -292,13 +278,13 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             val dateFormat = SimpleDateFormat("dd/MM/yyyy hh:mm aa", Locale.US)
             dateFormat.timeZone = newPostViewModel.endCalendar.value?.timeZone!!
             val dateTime = dateFormat.format(newPostViewModel.endCalendar.value?.time!!)
-            eventEndTextView.text = dateTime
+            binding.addpostEventendtext.text = dateTime
         }
     }
 
     private fun createPost(): Boolean {
         // Grab text fields
-        val userid = "" // Where is the user id stored?
+        val userid = deviceUUID.getImei() // Where is the user id stored?
         val title = binding.addpostName.text.toString()
         val info = binding.addpostDescription.text.toString()
 
@@ -314,21 +300,46 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             return false
         }
         // This should probably be uploaded at this point to Firebase, then get the URL
+        // Create a storage reference from our app
         val imageURL = ""
+        val storageRef = cloudStorage.reference
+
+        // Create a reference to "mountains.jpg"
+        val imageReference = storageRef.child("images/${deviceUUID.getImei()}+${Calendar.getInstance().timeInMillis}")
+
+        // While the file names are the same, the references point to different files
+        val bitmap = newPostViewModel.imageBitmap.value
+        val baos = ByteArrayOutputStream()
+        bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+        val data = baos.toByteArray()
+
+        var uploadTask = imageReference.putBytes(data)
+        uploadTask.addOnFailureListener {
+            // Handle unsuccessful uploads
+        }.addOnSuccessListener { taskSnapshot ->
+            // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
+            // ...
+        }
 
         // Category
-        // TODO: Alex needs to implement this
+        val tag = binding.addpostCategoryspinner.selectedItem as String
+        var icon : IconType = IconType.FOOD
+        var color : Color = Color.BLUE
+        if (binding.addpostCategoryspinner.selectedItemPosition < IconType.values().size) {
+            icon = IconType.getByValue(binding.addpostCategoryspinner.selectedItemPosition)!!
+            color = Color.getByValue(binding.addpostCategoryspinner.selectedItemPosition)!!
+        }
 
         // Event data
-        val isEvent = eventSwitch.isChecked
+        val isEvent = binding.addpostEvent.isChecked
         val startTime = newPostViewModel.startCalendar.value?.timeInMillis
         val endTime = newPostViewModel.endCalendar.value?.timeInMillis
 
         if (isEvent) {
-            if (eventStartTextView.text.toString() == getString(R.string.addpost_nostartdate)) {
+            if (binding.addpostEventstarttext.text.toString() == getString(R.string.addpost_nostartdate)) {
                 Toast.makeText(this, R.string.addpost_toast_nostart, Toast.LENGTH_SHORT).show()
                 return false
-            } else if (eventEndTextView.text.toString() == getString(R.string.addpost_noenddate)) {
+            } else if (binding.addpostEventendtext.text.toString() == getString(R.string.addpost_noenddate)) {
                 Toast.makeText(this, R.string.addpost_toast_noend, Toast.LENGTH_SHORT).show()
                 return false
             }
@@ -358,15 +369,22 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
         val geoPoint = GeoPoint(latitude, longitude)
 
         // Create Post object to upload to Firebase
-        val newPost = Post(userid, title, geoPoint, info)
+        val newPost = Post(userid, title, geoPoint, info, tag, imageReference.path, icon, color)
+
+        db.collection("posts")
+            .add(newPost)
+            .addOnSuccessListener { documentReference ->
+            }
+            .addOnFailureListener { e ->
+            }
 
         return true
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString(START_TEXT_KEY, eventStartTextView.text.toString())
-        outState.putString(END_TEXT_KEY, eventEndTextView.text.toString())
-        outState.putString(LOCATION_TEXT_KEY, currLocationTextView.text.toString())
+        outState.putString(START_TEXT_KEY, binding.addpostEventstarttext.text.toString())
+        outState.putString(END_TEXT_KEY, binding.addpostEventendtext.text.toString())
+        outState.putString(LOCATION_TEXT_KEY, binding.addpostCurrlocation.text.toString())
     }
 }

@@ -3,13 +3,20 @@ package com.cmpt362.nearby.classes
 import com.google.android.gms.common.internal.Objects
 import com.google.firebase.firestore.GeoPoint
 
-
 enum class IconType(val value: Int) {
-    NONE(0), FOOD(1), GAME(2), SPORT(3)
+    NONE(0), FOOD(1), GAME(2), SPORT(3);
+    companion object {
+        private val VALUES = values()
+        fun getByValue(value: Int) = VALUES.firstOrNull { it.value == value }
+    }
 }
 
 enum class Color(val value: Int) {
-    GREY(0), RED(1), GREEN(2), BLUE(3)
+    GREY(0), RED(1), GREEN(2), BLUE(3);
+    companion object {
+        private val VALUES = values()
+        fun getByValue(value: Int) = VALUES.firstOrNull { it.value == value }
+    }
 }
 
 class Post(
@@ -17,8 +24,9 @@ class Post(
     val title : String,
     val location: GeoPoint,
     val info: String,
-    val comments: ArrayList<Comment> = arrayListOf(),
+    val tag: String,
     val imageUrl: String = "",
     val iconType: IconType = IconType.NONE,
-    val iconColor: Color = Color.GREY
+    val iconColor: Color = Color.GREY,
+    val comments: ArrayList<Comment> = arrayListOf()
 )
