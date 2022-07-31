@@ -14,7 +14,7 @@ class FirestoreDatabase {
 
     private val COMMENTS = "comments"
     private val POSTS = "posts"
-    private val COMMENT_COUNT = "itemCount"
+    private val COMMENT_COUNT = "counter"
     private val COMMENT_ITEMS = "items"
 
     fun getPosts() {
@@ -34,9 +34,13 @@ class FirestoreDatabase {
     }
 
     fun addPost(entry: Post) {
-        val emptyCommentDoc = hashMapOf(
-            COMMENT_COUNT to 0L,
-            COMMENT_ITEMS to arrayListOf<Comment>()
+        val postId=""
+        // when creating a new post, also make a new document for comments with the same id
+        db.collection(COMMENTS).document(postId).set(
+            hashMapOf(
+                COMMENT_COUNT to 0L,
+                COMMENT_ITEMS to arrayListOf<Comment>()
+            )
         )
 
     }
