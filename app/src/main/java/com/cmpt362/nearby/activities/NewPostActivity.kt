@@ -29,6 +29,7 @@ import com.cmpt362.nearby.R
 import com.cmpt362.nearby.classes.Color
 import com.cmpt362.nearby.classes.IconType
 import com.cmpt362.nearby.classes.Post
+import com.cmpt362.nearby.database.FirestoreDatabase
 import com.cmpt362.nearby.databinding.ActivityNewPostBinding
 import com.cmpt362.nearby.viewmodels.NewPostViewModel
 import com.google.firebase.firestore.FirebaseFirestore
@@ -54,13 +55,11 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
 
     private lateinit var locationResult: ActivityResultLauncher<Intent>
 
-    private lateinit var db: FirebaseFirestore
     private lateinit var deviceUUID: TelephonyManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityNewPostBinding.inflate(layoutInflater)
-        db = FirebaseFirestore.getInstance()
         //cloudStorage = FirebaseStorage.getInstance()
         deviceUUID = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
 
@@ -380,13 +379,7 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
         // Create Post object to upload to Firebase
         // val newPost = Post(userid, title, geoPoint, info, tag, imageReference.path, icon, color)
         val newPost = Post("", title, geoPoint, info, tag, "", icon, color, isEvent)
-
-        db.collection("posts")
-            .add(newPost)
-            .addOnSuccessListener { documentReference ->
-            }
-            .addOnFailureListener { e ->
-            }
+        FirestoreDatabase().addPost(newPost)
 
         return true
     }
