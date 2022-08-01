@@ -53,7 +53,7 @@ class FirestoreDatabase {
             .add(entry)
             .addOnSuccessListener { documentReference ->
                
-                val postId="$documentReference.id"
+                val postId="${documentReference.id}"
                 Log.d("firebase", "DocumentSnapshot written with ID: $postId")
                 
                 // when creating a new post, also make a new document for comments with the same id
