@@ -1,6 +1,5 @@
 package com.cmpt362.nearby.activities
 
-import android.graphics.Color
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ListView

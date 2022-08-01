@@ -3,23 +3,33 @@ package com.cmpt362.nearby
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.*
+import android.graphics.drawable.Drawable
+import android.media.Image
 import android.os.Bundle
 import android.view.animation.Animation
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
+import androidx.core.view.drawToBitmap
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.ViewModelProvider
 import com.cmpt362.nearby.activities.FavouriteActivity
 import com.cmpt362.nearby.activities.FilterActivity
 import com.cmpt362.nearby.activities.NewPostActivity
 import com.cmpt362.nearby.animation.PinDetailAnimation
+import com.cmpt362.nearby.classes.Color
+import com.cmpt362.nearby.classes.IconType
+import com.cmpt362.nearby.database.FirestoreDatabase
 import com.cmpt362.nearby.databinding.ActivityMapsBinding
 import com.cmpt362.nearby.fragments.PinDetailsFragment
+import com.cmpt362.nearby.viewmodels.PostsViewModel
 import com.google.android.gms.maps.*
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import com.google.android.material.navigation.NavigationBarView
 
 
@@ -30,6 +40,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
     private lateinit var binding: ActivityMapsBinding
     private var detailActive: Boolean = false
 
+    private lateinit var postsViewModel: PostsViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -39,10 +51,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
             || ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED
             || ContextCompat.checkSelfPermission(this,
-                Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+            || ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
                 this,
-                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE),
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.ACCESS_FINE_LOCATION),
                 0
             )
         }
@@ -52,6 +67,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
         setContentView(binding.root)
         // Hides the top tool bar
         supportActionBar?.hide()
+
+        postsViewModel = ViewModelProvider(this).get(PostsViewModel::class.java)
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
@@ -110,6 +127,80 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
 
             return@setOnMarkerClickListener true
         }
+
+        postsViewModel.postsList.observe(this) {
+            println("debug: Calling post list observe")
+            mMap.clear()
+            val markerOptions = MarkerOptions()
+            for (post in it) {
+                val latLng = LatLng(post.location.latitude, post.location.longitude)
+                markerOptions.position(latLng)
+                markerOptions.title(it.indexOf(post).toString())
+                when(post.iconType) {
+                    IconType.NONE -> {
+                        val drawable = AppCompatResources.getDrawable(this, R.drawable.dining_grey)?.mutate()
+                        drawable?.setTintMode(PorterDuff.Mode.MULTIPLY)
+                        when(post.iconColor) {
+                            Color.GREY -> drawable?.setTint(android.graphics.Color.GRAY)
+                            Color.RED -> drawable?.setTint(android.graphics.Color.RED)
+                            Color.GREEN -> drawable?.setTint(android.graphics.Color.GREEN)
+                            Color.BLUE -> drawable?.setTint(android.graphics.Color.BLUE)
+                        }
+                        val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+                        val canvas = Canvas(bitmap)
+                        drawable?.setBounds(0, 0, 100, 100)
+                        drawable?.draw(canvas)
+                        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap))
+                    }
+                    IconType.FOOD -> {
+                        val drawable = AppCompatResources.getDrawable(this, R.drawable.dining_grey)?.mutate()
+                        drawable?.setTintMode(PorterDuff.Mode.MULTIPLY)
+                        when(post.iconColor) {
+                            Color.GREY -> drawable?.setTint(android.graphics.Color.GRAY)
+                            Color.RED -> drawable?.setTint(android.graphics.Color.RED)
+                            Color.GREEN -> drawable?.setTint(android.graphics.Color.GREEN)
+                            Color.BLUE -> drawable?.setTint(android.graphics.Color.BLUE)
+                        }
+                        val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+                        val canvas = Canvas(bitmap)
+                        drawable?.setBounds(0, 0, 100, 100)
+                        drawable?.draw(canvas)
+                        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap))
+                    }
+                    IconType.GAME -> {
+                        val drawable = AppCompatResources.getDrawable(this, R.drawable.gamepad_grey)?.mutate()
+                        drawable?.setTintMode(PorterDuff.Mode.MULTIPLY)
+                        when(post.iconColor) {
+                            Color.GREY -> drawable?.setTint(android.graphics.Color.GRAY)
+                            Color.RED -> drawable?.setTint(android.graphics.Color.RED)
+                            Color.GREEN -> drawable?.setTint(android.graphics.Color.GREEN)
+                            Color.BLUE -> drawable?.setTint(android.graphics.Color.BLUE)
+                        }
+                        val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+                        val canvas = Canvas(bitmap)
+                        drawable?.setBounds(0, 0, 100, 100)
+                        drawable?.draw(canvas)
+                        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap))
+                    }
+                    IconType.SPORT -> {
+                        val drawable = AppCompatResources.getDrawable(this, R.drawable.running_grey)?.mutate()
+                        drawable?.setTintMode(PorterDuff.Mode.MULTIPLY)
+                        when(post.iconColor) {
+                            Color.GREY -> drawable?.setTint(android.graphics.Color.GRAY)
+                            Color.RED -> drawable?.setTint(android.graphics.Color.RED)
+                            Color.GREEN -> drawable?.setTint(android.graphics.Color.GREEN)
+                            Color.BLUE -> drawable?.setTint(android.graphics.Color.BLUE)
+                        }
+                        val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+                        val canvas = Canvas(bitmap)
+                        drawable?.setBounds(0, 0, 100, 100)
+                        drawable?.draw(canvas)
+                        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap))
+                    }
+                }
+                mMap.addMarker(markerOptions)
+            }
+        }
     }
 
     private fun pinDetailsOpen() {
@@ -143,4 +234,5 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
         mMap.uiSettings.isScrollGesturesEnabledDuringRotateOrZoom = true;
         binding.pinDetailFragmentContainer.startAnimation(animation)
     }
+
 }

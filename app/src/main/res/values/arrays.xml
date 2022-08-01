@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <array name="Tags">
+        <item>Food</item>
         <item>Games</item>
+        <item>Sports</item>
         <item>Meetups</item>
         <item>Events</item>
     </array>
