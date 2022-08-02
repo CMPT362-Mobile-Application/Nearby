@@ -105,7 +105,7 @@
                 android:layout_alignParentLeft="true"
                 android:background="@null"
                 android:scaleType="centerInside"
-                android:src="@drawable/comment"/>
+                android:src="@drawable/comment" />
         </RelativeLayout>
     </LinearLayout>
 

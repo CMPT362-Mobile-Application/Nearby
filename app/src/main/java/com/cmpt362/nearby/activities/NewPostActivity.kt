@@ -378,7 +378,7 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
 
         // Create Post object to upload to Firebase
         // val newPost = Post(userid, title, geoPoint, info, tag, imageReference.path, icon, color)
-        val newPost = Post("", title, geoPoint, info, tag, "", icon, color, isEvent)
+        val newPost = Post("", title, geoPoint, info, tag, "", icon, color, isEvent, 0)
         FirestoreDatabase().addPost(newPost)
 
         return true
