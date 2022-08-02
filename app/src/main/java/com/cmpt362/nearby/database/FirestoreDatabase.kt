@@ -1,12 +1,13 @@
 package com.cmpt362.nearby.database
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
+import androidx.fragment.app.FragmentActivity
 import com.cmpt362.nearby.classes.Comment
 import com.cmpt362.nearby.classes.Post
-import com.google.firebase.database.DataSnapshot
 import com.google.firebase.firestore.*
-import kotlinx.coroutines.flow.Flow
-import kotlin.properties.Delegates
+
 
 object FirestoreDatabase {
     private val COMMENTS = "comments"
@@ -19,10 +20,56 @@ object FirestoreDatabase {
     private val FAVOURITE_LISTENER_KEY = "FAVOURITE_LISTENER"
     private val listeners = HashMap<String, ListenerRegistration>()
 
-    fun registerFavouriteListener(
-        filter: DbFilter,
-        callback: (ArrayList<Post>, ArrayList<String>) -> Unit) {
-        restartPostsListener(FAVOURITE_LISTENER_KEY, filter, callback)
+    fun registerFavouritesListener(
+        postId: String,
+        callback: (String) -> Unit) {
+        restartFavouritesListener(postId, callback)
+    }
+
+    private fun restartFavouritesListener(postId: String, callback: (String) -> Unit) {
+        if (listeners.containsKey(FAVOURITE_LISTENER_KEY)) {
+            listeners[FAVOURITE_LISTENER_KEY]!!.remove()
+            listeners.remove(FAVOURITE_LISTENER_KEY)
+        }
+
+        val favouritesListener = FirebaseFirestore.getInstance().collection(POSTS).document(postId)
+            .addSnapshotListener { document, _ ->
+                if (document != null) {
+                    Log.i("favouritesListener", "FirestoreDatabase: " + document.id)
+                    callback(document.id)
+                }
+            }
+
+        listeners[FAVOURITE_LISTENER_KEY] = favouritesListener
+    }
+
+    fun incrementFavouritePost(postId: String, activity: FragmentActivity?) {
+        val postRef = FirebaseFirestore.getInstance().collection(POSTS).document(postId)
+        postRef.update("favouritesCounter", FieldValue.increment(1))
+            .addOnSuccessListener { document ->
+                val sharedPref = activity?.getSharedPreferences("favourites", Context.MODE_PRIVATE)
+                if (sharedPref != null) {
+                    with (sharedPref.edit()) {
+                        putString(postId, postId)
+                        apply()
+                    }
+                }
+                Log.d("incrementFavouritePost", "incrementFavouritePost worked with $postId")
+            }
+            .addOnFailureListener { exception ->
+                Log.d("incrementFavouritePost", "incrementFavouritePost failed with", exception)
+            }
+    }
+
+    fun decrementFavouritePost(postId: String) {
+        val postRef = FirebaseFirestore.getInstance().collection(POSTS).document(postId)
+        postRef.update("favouritesCounter", FieldValue.increment(-1))
+            .addOnSuccessListener { document ->
+                //Log.d("incrementFavouritePost", "$document")
+            }
+            .addOnFailureListener { exception ->
+                //Log.d("incrementFavouritePost", "failed with", exception)
+            }
     }
 
     fun registerPostsListener(

@@ -18,5 +18,6 @@ class Post(
     val imageUrl: String = "",
     val iconType: IconType = IconType.NONE,
     val iconColor: Color = Color.GREY,
-    val isEvent: Boolean = false
+    val isEvent: Boolean = false,
+    val favouritesCounter: Int = 0
 )
