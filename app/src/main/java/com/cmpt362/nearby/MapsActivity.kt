@@ -136,45 +136,71 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
                 val latLng = LatLng(post.location.latitude, post.location.longitude)
                 markerOptions.position(latLng)
                 markerOptions.title(it.indexOf(post).toString())
-                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(getBitmapForIcon(post.iconType, post.iconColor)))
+                when(post.iconType) {
+                    IconType.NONE -> {
+                        val drawable = AppCompatResources.getDrawable(this, R.drawable.dining_grey)?.mutate()
+                        drawable?.setTintMode(PorterDuff.Mode.MULTIPLY)
+                        when(post.iconColor) {
+                            Color.GREY -> drawable?.setTint(android.graphics.Color.GRAY)
+                            Color.RED -> drawable?.setTint(android.graphics.Color.RED)
+                            Color.GREEN -> drawable?.setTint(android.graphics.Color.GREEN)
+                            Color.BLUE -> drawable?.setTint(android.graphics.Color.BLUE)
+                        }
+                        val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+                        val canvas = Canvas(bitmap)
+                        drawable?.setBounds(0, 0, 100, 100)
+                        drawable?.draw(canvas)
+                        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap))
+                    }
+                    IconType.FOOD -> {
+                        val drawable = AppCompatResources.getDrawable(this, R.drawable.dining_grey)?.mutate()
+                        drawable?.setTintMode(PorterDuff.Mode.MULTIPLY)
+                        when(post.iconColor) {
+                            Color.GREY -> drawable?.setTint(android.graphics.Color.GRAY)
+                            Color.RED -> drawable?.setTint(android.graphics.Color.RED)
+                            Color.GREEN -> drawable?.setTint(android.graphics.Color.GREEN)
+                            Color.BLUE -> drawable?.setTint(android.graphics.Color.BLUE)
+                        }
+                        val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+                        val canvas = Canvas(bitmap)
+                        drawable?.setBounds(0, 0, 100, 100)
+                        drawable?.draw(canvas)
+                        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap))
+                    }
+                    IconType.GAME -> {
+                        val drawable = AppCompatResources.getDrawable(this, R.drawable.gamepad_grey)?.mutate()
+                        drawable?.setTintMode(PorterDuff.Mode.MULTIPLY)
+                        when(post.iconColor) {
+                            Color.GREY -> drawable?.setTint(android.graphics.Color.GRAY)
+                            Color.RED -> drawable?.setTint(android.graphics.Color.RED)
+                            Color.GREEN -> drawable?.setTint(android.graphics.Color.GREEN)
+                            Color.BLUE -> drawable?.setTint(android.graphics.Color.BLUE)
+                        }
+                        val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+                        val canvas = Canvas(bitmap)
+                        drawable?.setBounds(0, 0, 100, 100)
+                        drawable?.draw(canvas)
+                        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap))
+                    }
+                    IconType.SPORT -> {
+                        val drawable = AppCompatResources.getDrawable(this, R.drawable.running_grey)?.mutate()
+                        drawable?.setTintMode(PorterDuff.Mode.MULTIPLY)
+                        when(post.iconColor) {
+                            Color.GREY -> drawable?.setTint(android.graphics.Color.GRAY)
+                            Color.RED -> drawable?.setTint(android.graphics.Color.RED)
+                            Color.GREEN -> drawable?.setTint(android.graphics.Color.GREEN)
+                            Color.BLUE -> drawable?.setTint(android.graphics.Color.BLUE)
+                        }
+                        val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+                        val canvas = Canvas(bitmap)
+                        drawable?.setBounds(0, 0, 100, 100)
+                        drawable?.draw(canvas)
+                        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap))
+                    }
+                }
                 mMap.addMarker(markerOptions)
             }
         }
-    }
-
-    private fun getBitmapForIcon(type: IconType, color: Color): Bitmap {
-        val drawableId = when (type) {
-            IconType.NONE -> when (color) {
-                Color.GREY -> R.drawable.general_grey
-                Color.RED -> R.drawable.general_red
-                Color.GREEN -> R.drawable.general_green
-                Color.BLUE -> R.drawable.general_blue
-            }
-            IconType.FOOD -> when (color) {
-                Color.GREY -> R.drawable.dining_grey
-                Color.RED -> R.drawable.dining_red
-                Color.GREEN -> R.drawable.dining_green
-                Color.BLUE -> R.drawable.dining_blue
-            }
-            IconType.GAME -> when (color) {
-                Color.GREY -> R.drawable.gamepad_grey
-                Color.RED -> R.drawable.gamepad_red
-                Color.GREEN -> R.drawable.gamepad_green
-                Color.BLUE -> R.drawable.gamepad_blue
-            }
-            IconType.SPORT -> when (color) {
-                Color.GREY -> R.drawable.running_grey
-                Color.RED -> R.drawable.running_red
-                Color.GREEN -> R.drawable.running_green
-                Color.BLUE -> R.drawable.running_blue
-            }
-        }
-        val drawable = AppCompatResources.getDrawable(this, drawableId)?.mutate()
-        val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-        drawable?.setBounds(0, 0, 100, 100)
-        drawable?.draw(canvas)
-        return bitmap
     }
 
     private fun pinDetailsOpen() {

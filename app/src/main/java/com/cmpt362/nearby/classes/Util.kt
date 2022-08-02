@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 object Util {
-    fun makeUuid(): String {
+    fun makeUid(): String {
         return UUID.randomUUID().toString().replace("-", "").uppercase()
     }
 

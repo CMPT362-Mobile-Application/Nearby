@@ -26,13 +26,13 @@ class DbFilter private constructor (
         var query: Query = collection
 
         if (tags.isNotEmpty()) {
-            query = query.whereArrayContains("tags", tags)
+            query = query.whereArrayContains("tag", tags)
         }
         if (earliestTime != null) {
-            query = query.whereGreaterThanOrEqualTo("timeStamp", earliestTime!!)
+            query = query.whereGreaterThanOrEqualTo("startTime", earliestTime!!)
         }
         if (latestTIme != null) {
-            query = query.whereLessThanOrEqualTo("timeStamp", latestTIme!!)
+            query = query.whereLessThanOrEqualTo("startTime", latestTIme!!)
         }
 
         return query

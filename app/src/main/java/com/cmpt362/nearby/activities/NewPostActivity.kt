@@ -22,6 +22,7 @@ import android.telephony.TelephonyManager
 import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModelProvider
@@ -29,17 +30,12 @@ import com.cmpt362.nearby.R
 import com.cmpt362.nearby.classes.Color
 import com.cmpt362.nearby.classes.IconType
 import com.cmpt362.nearby.classes.Post
-import com.cmpt362.nearby.classes.Util
 import com.cmpt362.nearby.database.FirestoreDatabase
 import com.cmpt362.nearby.databinding.ActivityNewPostBinding
 import com.cmpt362.nearby.viewmodels.NewPostViewModel
-import com.google.firebase.firestore.FirebaseFirestore
+import com.cmpt362.nearby.viewmodels.PostsViewModel
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.GeoPoint
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.text.SimpleDateFormat
@@ -70,7 +66,7 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
         deviceUUID = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
 
         // Setup view model for storing date/time entry and state
-        newPostViewModel = ViewModelProvider(this).get(NewPostViewModel::class.java)
+        newPostViewModel = ViewModelProvider(this)[NewPostViewModel::class.java]
 
         // Set up Category Spinner
         ArrayAdapter.createFromResource(
@@ -306,31 +302,22 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
         // Create a reference to "mountains.jpg"
         //val imageReference = storageRef.child("images/${deviceUUID.getImei()}+${Calendar.getInstance().timeInMillis}")
 
+
+
         // While the file names are the same, the references point to different files
-        var imageURL = ""
-        if (imageBitmap != null) {
-            val imageUuid = Util.makeUuid()
-            CoroutineScope(IO).launch {
-                val bitmap = imageBitmap
-                val baos = ByteArrayOutputStream()
-                bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-                val data = baos.toByteArray()
+        val bitmap = newPostViewModel.imageBitmap.value
+        val baos = ByteArrayOutputStream()
+        bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+        val data = baos.toByteArray()
 
-                val storage = Firebase.storage("gs://cmpt362-nearby")
-                val storageRef = storage.reference
-                val imageRef = storageRef.child("images/$imageUuid.jpg")
-
-                val uploadTask = imageRef.putBytes(data)
-                uploadTask.addOnFailureListener {
-                    // Error
-                }.addOnSuccessListener { taskSnapshot ->
-                    // Success!
-                }
-            }
-            imageURL = "gs://cmpt362-nearby/images/$imageUuid.jpg"
-        } else {
-            imageURL = "null"
-        }
+        // TODO: Get this uploading to cloud storage working
+        //        var uploadTask = imageReference.putBytes(data)
+        //        uploadTask.addOnFailureListener {
+        //            // Handle unsuccessful uploads
+        //        }.addOnSuccessListener { taskSnapshot ->
+        //            // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
+        //            // ...
+        //        }
 
         // Category
         val tag = binding.addpostCategoryspinner.selectedItem as String
@@ -343,22 +330,6 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
 
         // Event data
         val isEvent = binding.addpostEvent.isChecked
-        val startTime = newPostViewModel.startCalendar.value?.timeInMillis
-        val endTime = newPostViewModel.endCalendar.value?.timeInMillis
-        // Initial work to get the timestamp from startTime and endTime
-        //        println(startTime)
-        //        var seconds = 0
-        //        var nanoseconds = 0
-        //        if (startTime != null) {
-        //            println(startTime / 1000 )
-        //            seconds = (startTime / 1000).toInt()
-        //        }
-        //        if (startTime != null) {
-        //            println(startTime / 1000 % 1000)
-        //            nanoseconds = (startTime / 1000 % 1000).toInt()
-        //        }
-        //        println(Timestamp(seconds, nanoseconds))
-
 
         if (isEvent) {
             if (binding.addpostEventstarttext.text.toString() == getString(R.string.addpost_nostartdate)) {
@@ -393,10 +364,27 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
         }
         val geoPoint = GeoPoint(latitude, longitude)
 
+        val startTimestamp =
+            if (isEvent) Timestamp(newPostViewModel.startCalendar.value!!.time)
+            else Timestamp(Calendar.getInstance().time)
+
+        val endTimestamp =
+            if (isEvent) Timestamp(Calendar.getInstance().time)
+            else startTimestamp
+
         // Create Post object to upload to Firebase
-        // val newPost = Post(userid, title, geoPoint, info, tag, imageReference.path, icon, color)
-        val newPost = Post("", title, geoPoint, info, tag, "", icon, color, isEvent)
-        FirestoreDatabase().addPost(newPost)
+        val newPost = Post(
+            title = title,
+            startTime = startTimestamp,
+            endTime = endTimestamp,
+            location = geoPoint,
+            info = info,
+            tag = tag,
+            iconType = icon,
+            iconColor = color,
+            isEvent = isEvent)
+
+        FirestoreDatabase.addPost(newPost)
 
         return true
     }
