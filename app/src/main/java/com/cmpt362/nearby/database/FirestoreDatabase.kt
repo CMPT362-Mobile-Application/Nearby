@@ -6,6 +6,7 @@ import com.cmpt362.nearby.classes.Post
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.firestore.*
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlin.properties.Delegates

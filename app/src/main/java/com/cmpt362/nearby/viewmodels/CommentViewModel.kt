@@ -12,9 +12,7 @@ class CommentViewModel(private val postId: String): ViewModel() {
     val commentList: LiveData<ArrayList<Comment>> get() { return _commentList }
 
     fun addComment(commentTxt: String) {
-        replyingTo.value?.let {
-            FirestoreDatabase.addComment(Comment(0, commentTxt, it), postId)
-        }
+        FirestoreDatabase.addComment(Comment(0, commentTxt, replyingTo.value!!), postId)
     }
     
 }

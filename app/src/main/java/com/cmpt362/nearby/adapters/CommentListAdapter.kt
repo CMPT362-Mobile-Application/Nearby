@@ -34,7 +34,6 @@ class CommentListAdapter(
         // if no reply, make the replyId textview invisible for the comment item
         if (comment.replyId != Comment.NO_REF) {
             binding.commentReplyId.text = String.format("> %d", comment.replyId)
-            binding.commentId.visibility = View.VISIBLE
         } else {
             binding.commentReplyId.visibility = View.GONE
         }
