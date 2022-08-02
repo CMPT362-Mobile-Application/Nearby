@@ -9,6 +9,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import java.lang.reflect.Field
 import kotlin.properties.Delegates
 
 object FirestoreDatabase {
@@ -124,14 +125,14 @@ object FirestoreDatabase {
         commentRef.get().addOnSuccessListener {
             val id = it.data?.get(COMMENT_COUNT) as Long
 
-            commentRef.update(COMMENT_ITEMS, FieldValue.arrayUnion(
+            commentRef.update(
+                COMMENT_ITEMS, FieldValue.arrayUnion(
                 hashMapOf(
                     "id" to id,
                     "info" to comment.info,
                     "timestamp" to comment.timestamp,
-                    "replyId" to comment.replyId)))
-
-            commentRef.update(COMMENT_COUNT, FieldValue.increment(1))
+                    "replyId" to comment.replyId)),
+                COMMENT_COUNT, FieldValue.increment(1))
         }
 
     }
