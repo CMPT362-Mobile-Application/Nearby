@@ -331,15 +331,6 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             imageURL = "null"
         }
 
-        // TODO: Get this uploading to cloud storage working
-        //        var uploadTask = imageReference.putBytes(data)
-        //        uploadTask.addOnFailureListener {
-        //            // Handle unsuccessful uploads
-        //        }.addOnSuccessListener { taskSnapshot ->
-        //            // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
-        //            // ...
-        //        }
-
         // Category
         val tag = binding.addpostCategoryspinner.selectedItem as String
         var icon : IconType = IconType.FOOD
