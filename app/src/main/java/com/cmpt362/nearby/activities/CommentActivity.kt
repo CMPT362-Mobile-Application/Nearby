@@ -12,7 +12,9 @@ import com.cmpt362.nearby.viewmodels.CommentViewModel
 
 class CommentActivity : AppCompatActivity(){
     private lateinit var binding: ActivityCommentBinding
-    private lateinit var postId: String
+    private val postId: String by lazy {
+        intent.extras?.getString("postId", "").toString()
+    }
 
     // use lazy initialization
     private val commentViewModel: CommentViewModel by viewModels {
@@ -21,7 +23,6 @@ class CommentActivity : AppCompatActivity(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        postId = intent.extras?.getString("postId", "").toString()
 
         val newCommentFragment = NewCommentFragment(postId)
         val transaction = supportFragmentManager.beginTransaction()

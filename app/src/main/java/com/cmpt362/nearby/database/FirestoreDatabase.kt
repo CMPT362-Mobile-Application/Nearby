@@ -120,7 +120,7 @@ object FirestoreDatabase {
 
 
     private data class CommentList (
-        val itemCount: Long = 0L,
+        val counter: Long = 0L,
         val items: ArrayList<Comment> = arrayListOf()
     )
 
