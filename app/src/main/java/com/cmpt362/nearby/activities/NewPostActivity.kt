@@ -29,11 +29,17 @@ import com.cmpt362.nearby.R
 import com.cmpt362.nearby.classes.Color
 import com.cmpt362.nearby.classes.IconType
 import com.cmpt362.nearby.classes.Post
+import com.cmpt362.nearby.classes.Util
 import com.cmpt362.nearby.database.FirestoreDatabase
 import com.cmpt362.nearby.databinding.ActivityNewPostBinding
 import com.cmpt362.nearby.viewmodels.NewPostViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.text.SimpleDateFormat
@@ -294,17 +300,36 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
 
         // This should probably be uploaded at this point to Firebase, then get the URL
         // Create a storage reference from our app
-        val imageURL = ""
         //val storageRef = cloudStorage.reference
 
         // Create a reference to "mountains.jpg"
         //val imageReference = storageRef.child("images/${deviceUUID.getImei()}+${Calendar.getInstance().timeInMillis}")
 
         // While the file names are the same, the references point to different files
-        val bitmap = newPostViewModel.imageBitmap.value
-        val baos = ByteArrayOutputStream()
-        bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-        val data = baos.toByteArray()
+        var imageURL = ""
+        if (imageBitmap != null) {
+            val imageUuid = Util.makeUuid()
+            CoroutineScope(IO).launch {
+                val bitmap = imageBitmap
+                val baos = ByteArrayOutputStream()
+                bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+                val data = baos.toByteArray()
+
+                val storage = Firebase.storage("gs://cmpt362-nearby")
+                val storageRef = storage.reference
+                val imageRef = storageRef.child("images/$imageUuid.jpg")
+
+                val uploadTask = imageRef.putBytes(data)
+                uploadTask.addOnFailureListener {
+                    // Error
+                }.addOnSuccessListener { taskSnapshot ->
+                    // Success!
+                }
+            }
+            imageURL = "gs://cmpt362-nearby/images/$imageUuid.jpg"
+        } else {
+            imageURL = "null"
+        }
 
         // TODO: Get this uploading to cloud storage working
         //        var uploadTask = imageReference.putBytes(data)
@@ -378,7 +403,7 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
 
         // Create Post object to upload to Firebase
         // val newPost = Post(userid, title, geoPoint, info, tag, imageReference.path, icon, color)
-        val newPost = Post("", title, geoPoint, info, tag, "", icon, color, isEvent)
+        val newPost = Post("", title, geoPoint, info, tag, imageURL, icon, color, isEvent)
         FirestoreDatabase().addPost(newPost)
 
         return true

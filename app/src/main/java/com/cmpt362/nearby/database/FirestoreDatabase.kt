@@ -3,7 +3,6 @@ package com.cmpt362.nearby.database
 import android.util.Log
 import com.cmpt362.nearby.classes.Comment
 import com.cmpt362.nearby.classes.Post
-import com.google.firebase.database.DataSnapshot
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldValue
