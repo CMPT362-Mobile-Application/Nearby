@@ -19,7 +19,8 @@ class CommentViewModel(private val postId: String): ViewModel() {
 
     private fun updateComments() {
         FirestoreDatabase.registerCommentsListener(postId) { comments ->
-            _commentList.value = comments }
+            _commentList.postValue(comments)
+        }
     }
 
     fun addComment(commentTxt: String) {

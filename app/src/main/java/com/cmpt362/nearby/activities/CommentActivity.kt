@@ -38,8 +38,7 @@ class CommentActivity : AppCompatActivity(){
         commentViewModel.commentList.observe(this) { comments ->
             comments?.let {
                 commentViewModel.commentList.value?.let {
-                    commentListAdapter?.updateItems(comments)
-                    binding.commentRecycler.adapter = commentListAdapter
+                    commentListAdapter!!.updateItems(comments)
                 }
             }
         }

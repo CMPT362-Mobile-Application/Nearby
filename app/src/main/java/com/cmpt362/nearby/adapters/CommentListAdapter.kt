@@ -47,8 +47,8 @@ class CommentListAdapter(
         return comments.size
     }
 
-    fun updateItems(newItems: ArrayList<Comment>?) {
-        comments = newItems ?: arrayListOf()
+    fun updateItems(newItems: ArrayList<Comment>) {
+        comments = newItems
         notifyDataSetChanged()
     }
 }

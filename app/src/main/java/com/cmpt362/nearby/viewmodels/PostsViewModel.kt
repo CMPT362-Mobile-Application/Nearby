@@ -16,15 +16,14 @@ class PostsViewModel: ViewModel() {
         MutableLiveData(arrayListOf())
     val idList: LiveData<ArrayList<String>> get() { return _idList }
 
-    private val _filter: MutableLiveData<DbFilter> =
-        MutableLiveData(DbFilter.Builder().build())
+    private var _filter: DbFilter = DbFilter.Builder().build()
 
     init {
         updatePosts()
     }
 
-    private fun updatePosts(filter: DbFilter = DbFilter.Builder().build()) {
-        FirestoreDatabase.registerPostsListener(filter) { posts, ids ->
+    private fun updatePosts() {
+        FirestoreDatabase.registerPostsListener(_filter) { posts, ids ->
             _postList.value = posts
             _idList.value = ids
         }
