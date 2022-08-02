@@ -24,6 +24,7 @@ import com.cmpt362.nearby.activities.NewPostActivity
 import com.cmpt362.nearby.animation.PinDetailAnimation
 import com.cmpt362.nearby.classes.Color
 import com.cmpt362.nearby.classes.IconType
+import com.cmpt362.nearby.classes.Post
 import com.cmpt362.nearby.database.FirestoreDatabase
 import com.cmpt362.nearby.databinding.ActivityMapsBinding
 import com.cmpt362.nearby.fragments.PinDetailsFragment
@@ -121,7 +122,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
             } else {
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(it.position));
                 mMap.moveCamera(CameraUpdateFactory.zoomTo(15.0f));
-                pinDetailsOpen()
+                // There will be posts for sure if the marker is loaded
+                val index = it.title!!.toInt()
+                val post = postsViewModel.postsList.value!!.get(index)
+                val id = postsViewModel.idList.value!!.get(index)
+                pinDetailsOpen(post, id)
                 detailActive = true
             }
 
@@ -177,9 +182,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
         return bitmap
     }
 
-    private fun pinDetailsOpen() {
+    private fun pinDetailsOpen(post: Post, id: String) {
         //Zoom on the pin selected
-        val detailsFragment = PinDetailsFragment()
+        val detailsFragment = PinDetailsFragment(post, id)
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.pin_detail_fragment_container, detailsFragment).commit()
 

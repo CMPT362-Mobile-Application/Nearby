@@ -45,9 +45,6 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import com.cmpt362.nearby.viewmodels.PostsViewModel
 import com.google.firebase.Timestamp
-import com.google.firebase.firestore.GeoPoint
-import java.io.ByteArrayOutputStream
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -332,7 +329,7 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
                     // Success!
                 }
             }
-            imageURL = "gs://cmpt362-nearby/images/$imageUuid.jpg"
+            imageURL = "images/$imageUuid.jpg"
         } else {
             imageURL = "null"
         }
