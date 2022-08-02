@@ -45,4 +45,5 @@
     <!-- Comment Activity/Fragment -->
     <string name="reply">Reply</string>
     <string name="post">Post</string>
+    <string name="comment">Comment</string>
 </resources>
