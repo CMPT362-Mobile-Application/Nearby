@@ -32,7 +32,6 @@ import com.cmpt362.nearby.classes.Post
 import com.cmpt362.nearby.database.FirestoreDatabase
 import com.cmpt362.nearby.databinding.ActivityNewPostBinding
 import com.cmpt362.nearby.viewmodels.NewPostViewModel
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -84,6 +83,29 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             } else {
                 binding.addpostEventstartlayout.visibility = RelativeLayout.GONE
                 binding.addpostEventendlayout.visibility = RelativeLayout.GONE
+            }
+        }
+
+        // Set radio buttons
+        binding.addpostIconGroup.check(R.id.addpost_icon_group_none)
+        if(newPostViewModel.icon.value == null) {newPostViewModel.icon.value = IconType.NONE}
+        binding.addpostIconGroup.setOnCheckedChangeListener { radGrp, id ->
+            when (id) {
+                R.id.addpost_icon_group_none -> {newPostViewModel.icon.value = IconType.NONE}
+                R.id.addpost_icon_group_food -> {newPostViewModel.icon.value = IconType.FOOD}
+                R.id.addpost_icon_group_game -> {newPostViewModel.icon.value = IconType.GAME}
+                R.id.addpost_icon_group_sport -> {newPostViewModel.icon.value = IconType.SPORT}
+            }
+        }
+        // Set radio buttons
+        binding.addpostColorGroup.check(R.id.addpost_color_group_grey)
+        if(newPostViewModel.color.value == null) {newPostViewModel.color.value = Color.GREY}
+        binding.addpostColorGroup.setOnCheckedChangeListener { radGrp, id ->
+            when (id) {
+                R.id.addpost_color_group_grey -> {newPostViewModel.color.value = Color.GREY}
+                R.id.addpost_color_group_red -> {newPostViewModel.color.value = Color.RED}
+                R.id.addpost_color_group_green -> {newPostViewModel.color.value = Color.GREEN}
+                R.id.addpost_color_group_blue -> {newPostViewModel.color.value = Color.BLUE}
             }
         }
 
