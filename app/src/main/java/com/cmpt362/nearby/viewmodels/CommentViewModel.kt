@@ -14,20 +14,18 @@ class CommentViewModel(private val postId: String): ViewModel() {
     val commentList: LiveData<ArrayList<Comment>> get() { return _commentList }
 
     init {
-        getComments()
+        updateComments()
     }
 
-    private fun getComments() {
-        FirestoreDatabase().getComments(postId) { comments ->
+    private fun updateComments() {
+        FirestoreDatabase.registerCommentsListener(postId) { comments ->
             _commentList.value = comments }
     }
 
     fun addComment(commentTxt: String) {
         replyingTo.value?.let {
-            FirestoreDatabase().addComment(Comment(0, commentTxt, it), postId)
+            FirestoreDatabase.addComment(Comment(0, commentTxt, it), postId)
         }
-        // retrieve the latest changes from the database
-        getComments()
     }
     
 }
