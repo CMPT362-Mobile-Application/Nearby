@@ -5,7 +5,9 @@ import com.cmpt362.nearby.classes.Comment
 import com.cmpt362.nearby.classes.Post
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.firestore.*
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlin.properties.Delegates
 
 object FirestoreDatabase {
@@ -96,6 +98,21 @@ object FirestoreDatabase {
             }
 
         listeners[COMMENT_LISTENER_KEY] = commentListener
+    }
+
+    fun getComments(postId: String): Flow<ArrayList<Comment>> = callbackFlow {
+       val listenerRegistration = FirebaseFirestore.getInstance()
+           .collection(COMMENTS).document(postId)
+           .addSnapshotListener { document, _ ->
+               if (document != null) {
+                   val commentList = document.toObject(CommentList::class.java)
+                   trySend(commentList!!.items).isSuccess
+               }
+           }
+
+        awaitClose {
+            listenerRegistration.remove()
+        }
     }
 
 

@@ -28,19 +28,19 @@ class CommentActivity : AppCompatActivity(){
         val transaction = supportFragmentManager.beginTransaction()
         transaction.add(R.id.new_comment_fragment_container, newCommentFragment).commit()
 
-        val commentListAdapter = commentViewModel.commentList.value?.let {
-            CommentListAdapter(it, newCommentFragment::setReplyToId) }
+        val commentListAdapter = if (commentViewModel.commentList.value != null) {
+            CommentListAdapter(commentViewModel.commentList.value!!,
+                newCommentFragment::setReplyingTo)
+        } else {
+            CommentListAdapter(arrayListOf(), newCommentFragment::setReplyingTo)
+        }
 
         binding = ActivityCommentBinding.inflate(layoutInflater)
         binding.commentRecycler.adapter = commentListAdapter
 
         // set comments adapter to change whenever value in viewModel is updated
         commentViewModel.commentList.observe(this) { comments ->
-            comments?.let {
-                commentViewModel.commentList.value?.let {
-                    commentListAdapter!!.updateItems(comments)
-                }
-            }
+                commentListAdapter.updateItems(comments)
         }
 
         setContentView(binding.root)

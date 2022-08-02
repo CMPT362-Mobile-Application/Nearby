@@ -28,7 +28,7 @@ class NewCommentFragment(private val postId: String) : Fragment(R.layout.fragmen
         _binding = FragmentNewCommentBinding.inflate(inflater, container, false)
 
         commentViewModel.replyingTo.observe(viewLifecycleOwner) {
-            setReplyToId(it)
+            setReplyingTo(it)
         }
 
         binding.newCommentReply.setOnClickListener {
@@ -44,7 +44,7 @@ class NewCommentFragment(private val postId: String) : Fragment(R.layout.fragmen
     }
 
 
-    fun setReplyToId(id: Long) {
+    fun setReplyingTo(id: Long) {
         if (id != Comment.NO_REF) {
             binding.newCommentBtn.text = getString(R.string.reply)
             binding.newCommentReply.text = String.format("X replying to %d", id)
