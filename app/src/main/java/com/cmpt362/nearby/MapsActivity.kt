@@ -1,12 +1,15 @@
 package com.cmpt362.nearby
 
 import android.Manifest
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.media.Image
 import android.os.Bundle
+import android.view.View
 import android.view.animation.Animation
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
@@ -16,6 +19,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.drawToBitmap
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentContainer
+import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import com.cmpt362.nearby.activities.FavouriteActivity
@@ -40,6 +45,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
     // Binding for the xml file
     private lateinit var binding: ActivityMapsBinding
     private var detailActive: Boolean = false
+    private var detailsFragment: PinDetailsFragment? = null
 
     private lateinit var postsViewModel: PostsViewModel
 
@@ -184,13 +190,21 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
 
     private fun pinDetailsOpen(post: Post, id: String) {
         //Zoom on the pin selected
-        val detailsFragment = PinDetailsFragment(post, id)
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.pin_detail_fragment_container, detailsFragment).commit()
 
         var animation: Animation? = null
         animation = PinDetailAnimation(binding.pinDetailFragmentContainer, 1000, 0)
         animation.duration = 1000
+        animation.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationEnd(animation: Animation?) {}
+            override fun onAnimationRepeat(animation: Animation?) {}
+
+            override fun onAnimationStart(animation: Animation?) {
+                detailsFragment = PinDetailsFragment(post, id)
+                val fragmentTransaction = supportFragmentManager.beginTransaction()
+                fragmentTransaction.replace(R.id.pin_detail_fragment_container, detailsFragment!!).commit()
+                binding.pinDetailFragmentContainer.visibility = View.VISIBLE
+            }
+        })
         mMap.uiSettings.isScrollGesturesEnabled = false;
         mMap.uiSettings.isRotateGesturesEnabled = false;
         mMap.uiSettings.isZoomControlsEnabled = false;
@@ -204,6 +218,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
         var animation: Animation? = null
         animation = PinDetailAnimation(binding.pinDetailFragmentContainer, 1000, 1)
         animation.duration = 1000
+        animation.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(animation: Animation?) {}
+            override fun onAnimationRepeat(animation: Animation?) {}
+
+            override fun onAnimationEnd(animation: Animation?) {
+                // Remember to destroy the fragment
+                binding.pinDetailFragmentContainer.visibility = View.GONE
+                val fragmentTransaction = supportFragmentManager.beginTransaction()
+                fragmentTransaction.remove(detailsFragment!!).commit()
+                detailsFragment = null
+            }
+        })
         mMap.uiSettings.isScrollGesturesEnabled = true;
         mMap.uiSettings.isScrollGesturesEnabled = true;
         mMap.uiSettings.isRotateGesturesEnabled = true;
@@ -214,4 +240,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
         binding.pinDetailFragmentContainer.startAnimation(animation)
     }
 
+    override fun onBackPressed() {
+        if (detailActive) {
+            pinDetailsClose()
+            detailActive = false
+        } else {
+            finish()
+        }
+    }
 }

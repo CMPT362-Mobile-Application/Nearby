@@ -39,7 +39,9 @@
 
         <activity
             android:name="com.cmpt362.nearby.MapsActivity"
-            android:exported="true" >
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
