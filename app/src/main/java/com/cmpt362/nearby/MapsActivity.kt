@@ -24,6 +24,7 @@ import com.cmpt362.nearby.activities.NewPostActivity
 import com.cmpt362.nearby.animation.PinDetailAnimation
 import com.cmpt362.nearby.classes.Color
 import com.cmpt362.nearby.classes.IconType
+import com.cmpt362.nearby.classes.Post
 import com.cmpt362.nearby.database.FirestoreDatabase
 import com.cmpt362.nearby.databinding.ActivityMapsBinding
 import com.cmpt362.nearby.fragments.PinDetailsFragment
@@ -121,7 +122,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
             } else {
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(it.position));
                 mMap.moveCamera(CameraUpdateFactory.zoomTo(15.0f));
-                pinDetailsOpen()
+                // There will be posts for sure if the marker is loaded
+                val index = it.title!!.toInt()
+                val post = postsViewModel.postsList.value!!.get(index)
+                val id = postsViewModel.idList.value!!.get(index)
+                pinDetailsOpen(post, id)
                 detailActive = true
             }
 
@@ -136,76 +141,50 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
                 val latLng = LatLng(post.location.latitude, post.location.longitude)
                 markerOptions.position(latLng)
                 markerOptions.title(it.indexOf(post).toString())
-                when(post.iconType) {
-                    IconType.NONE -> {
-                        val drawable = AppCompatResources.getDrawable(this, R.drawable.dining_grey)?.mutate()
-                        drawable?.setTintMode(PorterDuff.Mode.MULTIPLY)
-                        when(post.iconColor) {
-                            Color.GREY -> drawable?.setTint(android.graphics.Color.GRAY)
-                            Color.RED -> drawable?.setTint(android.graphics.Color.RED)
-                            Color.GREEN -> drawable?.setTint(android.graphics.Color.GREEN)
-                            Color.BLUE -> drawable?.setTint(android.graphics.Color.BLUE)
-                        }
-                        val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
-                        val canvas = Canvas(bitmap)
-                        drawable?.setBounds(0, 0, 100, 100)
-                        drawable?.draw(canvas)
-                        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap))
-                    }
-                    IconType.FOOD -> {
-                        val drawable = AppCompatResources.getDrawable(this, R.drawable.dining_grey)?.mutate()
-                        drawable?.setTintMode(PorterDuff.Mode.MULTIPLY)
-                        when(post.iconColor) {
-                            Color.GREY -> drawable?.setTint(android.graphics.Color.GRAY)
-                            Color.RED -> drawable?.setTint(android.graphics.Color.RED)
-                            Color.GREEN -> drawable?.setTint(android.graphics.Color.GREEN)
-                            Color.BLUE -> drawable?.setTint(android.graphics.Color.BLUE)
-                        }
-                        val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
-                        val canvas = Canvas(bitmap)
-                        drawable?.setBounds(0, 0, 100, 100)
-                        drawable?.draw(canvas)
-                        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap))
-                    }
-                    IconType.GAME -> {
-                        val drawable = AppCompatResources.getDrawable(this, R.drawable.gamepad_grey)?.mutate()
-                        drawable?.setTintMode(PorterDuff.Mode.MULTIPLY)
-                        when(post.iconColor) {
-                            Color.GREY -> drawable?.setTint(android.graphics.Color.GRAY)
-                            Color.RED -> drawable?.setTint(android.graphics.Color.RED)
-                            Color.GREEN -> drawable?.setTint(android.graphics.Color.GREEN)
-                            Color.BLUE -> drawable?.setTint(android.graphics.Color.BLUE)
-                        }
-                        val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
-                        val canvas = Canvas(bitmap)
-                        drawable?.setBounds(0, 0, 100, 100)
-                        drawable?.draw(canvas)
-                        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap))
-                    }
-                    IconType.SPORT -> {
-                        val drawable = AppCompatResources.getDrawable(this, R.drawable.running_grey)?.mutate()
-                        drawable?.setTintMode(PorterDuff.Mode.MULTIPLY)
-                        when(post.iconColor) {
-                            Color.GREY -> drawable?.setTint(android.graphics.Color.GRAY)
-                            Color.RED -> drawable?.setTint(android.graphics.Color.RED)
-                            Color.GREEN -> drawable?.setTint(android.graphics.Color.GREEN)
-                            Color.BLUE -> drawable?.setTint(android.graphics.Color.BLUE)
-                        }
-                        val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
-                        val canvas = Canvas(bitmap)
-                        drawable?.setBounds(0, 0, 100, 100)
-                        drawable?.draw(canvas)
-                        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap))
-                    }
-                }
+                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(getBitmapForIcon(post.iconType, post.iconColor)))
                 mMap.addMarker(markerOptions)
             }
         }
     }
 
-    private fun pinDetailsOpen() {
+    private fun getBitmapForIcon(type: IconType, color: Color): Bitmap {
+        val drawableId = when (type) {
+            IconType.NONE -> when (color) {
+                Color.GREY -> R.drawable.general_grey
+                Color.RED -> R.drawable.general_red
+                Color.GREEN -> R.drawable.general_green
+                Color.BLUE -> R.drawable.general_blue
+            }
+            IconType.FOOD -> when (color) {
+                Color.GREY -> R.drawable.dining_grey
+                Color.RED -> R.drawable.dining_red
+                Color.GREEN -> R.drawable.dining_green
+                Color.BLUE -> R.drawable.dining_blue
+            }
+            IconType.GAME -> when (color) {
+                Color.GREY -> R.drawable.gamepad_grey
+                Color.RED -> R.drawable.gamepad_red
+                Color.GREEN -> R.drawable.gamepad_green
+                Color.BLUE -> R.drawable.gamepad_blue
+            }
+            IconType.SPORT -> when (color) {
+                Color.GREY -> R.drawable.running_grey
+                Color.RED -> R.drawable.running_red
+                Color.GREEN -> R.drawable.running_green
+                Color.BLUE -> R.drawable.running_blue
+            }
+        }
+        val drawable = AppCompatResources.getDrawable(this, drawableId)?.mutate()
+        val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        drawable?.setBounds(0, 0, 100, 100)
+        drawable?.draw(canvas)
+        return bitmap
+    }
+
+    private fun pinDetailsOpen(post: Post, id: String) {
         //Zoom on the pin selected
-        val detailsFragment = PinDetailsFragment()
+        val detailsFragment = PinDetailsFragment(post, id)
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.pin_detail_fragment_container, detailsFragment).commit()
 
