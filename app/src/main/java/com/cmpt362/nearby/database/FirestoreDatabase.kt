@@ -1,9 +1,13 @@
 package com.cmpt362.nearby.database
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
+import androidx.fragment.app.FragmentActivity
 import com.cmpt362.nearby.classes.Comment
 import com.cmpt362.nearby.classes.Post
 import com.google.firebase.firestore.*
+
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow

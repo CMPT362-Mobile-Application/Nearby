@@ -1,32 +1,41 @@
 package com.cmpt362.nearby.fragments
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.location.Geocoder
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.activity.viewModels
+import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.bumptech.glide.Glide
+import androidx.lifecycle.ViewModelProvider
 import com.cmpt362.nearby.R
 import com.cmpt362.nearby.activities.CommentActivity
 import com.cmpt362.nearby.classes.GlideApp
 import com.cmpt362.nearby.classes.Post
 import com.cmpt362.nearby.classes.Util
+import com.cmpt362.nearby.database.FirestoreDatabase
 import com.cmpt362.nearby.databinding.FragmentPinDetailsBinding
 import com.cmpt362.nearby.viewmodels.CommentViewModel
+import com.cmpt362.nearby.viewmodels.PostsViewModel
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+
 
 class PinDetailsFragment(val post: Post, val id: String) : Fragment(R.layout.fragment_pin_details) {
     private val commentViewModel: CommentViewModel by viewModels {
         Util.CommentViewModelFactory(id)
     }
+
+
+    private lateinit var postsViewModel: PostsViewModel
+    private var canAddFavourite = false;
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,6 +43,7 @@ class PinDetailsFragment(val post: Post, val id: String) : Fragment(R.layout.fra
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentPinDetailsBinding.inflate(inflater, container, false)
+        postsViewModel = ViewModelProvider(this).get(PostsViewModel::class.java)
 
         binding.pinDetailComment.setOnClickListener {
             val intent = Intent(activity, CommentActivity::class.java)
@@ -86,6 +96,52 @@ class PinDetailsFragment(val post: Post, val id: String) : Fragment(R.layout.fra
                 "No one has commented yet!"
             } else {
                 it[it.size - 1].info
+            }
+        }
+
+        binding.pinDetailLikeButton.setOnClickListener() {
+            val sharedPref = activity?.getSharedPreferences("favourites", Context.MODE_PRIVATE)
+            if (sharedPref != null) {
+                if (sharedPref.contains(id)) { // un favourite post
+                    FirestoreDatabase.decrementFavouritePost(id)
+                } else { // favourite post
+                    FirestoreDatabase.incrementFavouritePost(id)
+                }
+                canAddFavourite = true
+            }
+        }
+
+        // check if we already favourited the post
+        val sharedPref = activity?.getSharedPreferences("favourites", Context.MODE_PRIVATE)
+        val likeButton: ImageButton = binding.pinDetailLikeButton
+        if (sharedPref != null) {
+            if (sharedPref.contains(id)) {
+                likeButton.setImageResource(R.drawable.heart_red)
+            }
+        }
+
+        postsViewModel.postsList.observe(viewLifecycleOwner) {
+            if (canAddFavourite) {
+                Log.i("favouritesListener", "postsViewModel has been updated")
+
+                val sharedPref = activity?.getSharedPreferences("favourites", Context.MODE_PRIVATE)
+                val likeButton: ImageButton = binding.pinDetailLikeButton
+                if (sharedPref != null) {
+                    if (sharedPref.contains(id)) { // un favourite post
+                        with (sharedPref.edit()) {
+                            remove(id)
+                            apply()
+                        }
+                        likeButton.setImageResource(R.drawable.heart_grey)
+                    } else { // favourite post
+                        with (sharedPref.edit()) {
+                            putString(id, id)
+                            apply()
+                        }
+                        likeButton.setImageResource(R.drawable.heart_red)
+                    }
+                }
+                canAddFavourite = false
             }
         }
 

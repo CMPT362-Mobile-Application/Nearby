@@ -3,6 +3,7 @@ package com.cmpt362.nearby.classes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.cmpt362.nearby.viewmodels.CommentViewModel
+import com.cmpt362.nearby.viewmodels.FavouriteViewModel
 import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
 import java.util.*
@@ -33,5 +34,10 @@ object Util {
     class CommentViewModelFactory(private val postId: String):
         ViewModelProvider.NewInstanceFactory() {
         override fun <T : ViewModel> create(modelClass: Class<T>): T = CommentViewModel(postId) as T
+    }
+
+    class FavouritesViewModelFactory(private val postId: String):
+        ViewModelProvider.NewInstanceFactory() {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T = FavouriteViewModel(postId) as T
     }
 }
