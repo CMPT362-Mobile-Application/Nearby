@@ -19,6 +19,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.telephony.TelephonyManager
+import android.view.View
 import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -183,6 +184,8 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
         // Listen for image bitmap changes
         newPostViewModel.imageBitmap.observe(this) {
             binding.addpostImageview.setImageBitmap(it)
+            binding.addpostImageview.visibility = View.VISIBLE
+            binding.addpostAddimagebutton.text = getString(R.string.addpost_changeimage)
         }
 
         // Set Location Button
