@@ -72,24 +72,16 @@ object FirestoreDatabase {
 
 
     fun addPost(entry: Post) {
-        FirebaseFirestore.getInstance()
-            .collection("posts")
-            .add(entry)
-            .addOnSuccessListener { documentReference ->
-                val postId = documentReference.id
+        val db = FirebaseFirestore.getInstance()
+        val postDocRef = db.collection(POSTS).document()
+        postDocRef.set(entry)
 
-                // when creating a new post, also make a new document for comments with the same id
-                FirebaseFirestore.getInstance()
-                    .collection(COMMENTS).document(postId).set(
-                    hashMapOf(
-                        COMMENT_COUNT to 0L,
-                        COMMENT_ITEMS to arrayListOf<Comment>()
-                    )
-                )}
-            .addOnFailureListener { e ->
-                Log.w("firebase", "Error adding document", e)
-            }
-
+        db.collection(COMMENTS).document(postDocRef.id).set(
+            hashMapOf(
+                COMMENT_COUNT to 0L,
+                COMMENT_ITEMS to arrayListOf<Comment>()
+            )
+        )
     }
 
     fun registerCommentsListener(postId: String, callback: (ArrayList<Comment>) -> Unit) {
