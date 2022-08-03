@@ -250,10 +250,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
             criteria.accuracy = Criteria.ACCURACY_FINE
             val provider = locationManager.getBestProvider(criteria, true)
             val location = locationManager.getLastKnownLocation(provider!!)
-            val latitude = location?.latitude
-            val longitude = location?.longitude
-            val latLng = LatLng(latitude!!, longitude!!)
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15.0f))
+            if (location != null) {
+                val latitude = location.latitude
+                val longitude = location.longitude
+                val latLng = LatLng(latitude, longitude)
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15.0f))
+            }
         } catch (e: SecurityException) {
 
         }
