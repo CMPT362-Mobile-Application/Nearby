@@ -34,6 +34,7 @@ class CommentListAdapter(
         // if no reply, make the replyId textview invisible for the comment item
         if (comment.replyId != Comment.NO_REF) {
             binding.commentReplyId.text = String.format("> %d", comment.replyId)
+            binding.commentReplyId.visibility = View.VISIBLE
         } else {
             binding.commentReplyId.visibility = View.GONE
         }
@@ -45,6 +46,14 @@ class CommentListAdapter(
 
     override fun getItemCount(): Int {
         return comments.size
+    }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return position
     }
 
     fun updateItems(newItems: ArrayList<Comment>) {

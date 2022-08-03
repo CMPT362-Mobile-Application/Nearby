@@ -34,6 +34,7 @@ class CommentActivity : AppCompatActivity(){
         } else {
             CommentListAdapter(arrayListOf(), newCommentFragment::setReplyingTo)
         }
+        commentListAdapter.setHasStableIds(true)
 
         binding = ActivityCommentBinding.inflate(layoutInflater)
         binding.commentRecycler.adapter = commentListAdapter
