@@ -360,8 +360,20 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
 
         // Category
         val tag = binding.addpostCategoryspinner.selectedItem as String
-        var icon : IconType = IconType.fromInt(binding.addpostIconGroup.checkedRadioButtonId)
-        var color : Color = Color.fromInt(binding.addpostColorGroup.checkedRadioButtonId)
+        var icon : IconType = when(binding.addpostIconGroup.checkedRadioButtonId) {
+            R.id.addpost_icon_group_none -> IconType.NONE
+            R.id.addpost_icon_group_food -> IconType.FOOD
+            R.id.addpost_icon_group_game -> IconType.GAME
+            R.id.addpost_icon_group_sport -> IconType.SPORT
+            else -> IconType.NONE
+        }
+        var color : Color = when(binding.addpostColorGroup.checkedRadioButtonId) {
+            R.id.addpost_color_group_grey -> Color.GREY
+            R.id.addpost_color_group_red -> Color.RED
+            R.id.addpost_color_group_green -> Color.GREEN
+            R.id.addpost_color_group_blue -> Color.BLUE
+            else -> Color.GREY
+        }
 //        if (binding.addpostCategoryspinner.selectedItemPosition < IconType.values().size) {
 //            icon = IconType.fromInt(binding.addpostCategoryspinner.selectedItemPosition)!!
 //            color = Color.fromInt(binding.addpostCategoryspinner.selectedItemPosition)!!
