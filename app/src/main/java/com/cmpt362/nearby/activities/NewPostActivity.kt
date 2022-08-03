@@ -23,6 +23,7 @@ import android.view.View
 import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModelProvider
@@ -42,6 +43,8 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import java.io.File
+import com.cmpt362.nearby.viewmodels.PostsViewModel
+import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -70,7 +73,7 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
         deviceUUID = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
 
         // Setup view model for storing date/time entry and state
-        newPostViewModel = ViewModelProvider(this).get(NewPostViewModel::class.java)
+        newPostViewModel = ViewModelProvider(this)[NewPostViewModel::class.java]
 
         // Set up Category Spinner
         ArrayAdapter.createFromResource(
@@ -351,7 +354,7 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
                     // Success!
                 }
             }
-            imageURL = "gs://cmpt362-nearby/images/$imageUuid.jpg"
+            imageURL = "images/$imageUuid.jpg"
         } else {
             imageURL = "null"
         }
@@ -367,22 +370,6 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
 
         // Event data
         val isEvent = binding.addpostEvent.isChecked
-        val startTime = newPostViewModel.startCalendar.value?.timeInMillis
-        val endTime = newPostViewModel.endCalendar.value?.timeInMillis
-        // Initial work to get the timestamp from startTime and endTime
-        //        println(startTime)
-        //        var seconds = 0
-        //        var nanoseconds = 0
-        //        if (startTime != null) {
-        //            println(startTime / 1000 )
-        //            seconds = (startTime / 1000).toInt()
-        //        }
-        //        if (startTime != null) {
-        //            println(startTime / 1000 % 1000)
-        //            nanoseconds = (startTime / 1000 % 1000).toInt()
-        //        }
-        //        println(Timestamp(seconds, nanoseconds))
-
 
         if (isEvent) {
             if (binding.addpostEventstarttext.text.toString() == getString(R.string.addpost_nostartdate)) {
@@ -417,10 +404,29 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
         }
         val geoPoint = GeoPoint(latitude, longitude)
 
+        val startTimestamp =
+            if (isEvent) Timestamp(newPostViewModel.startCalendar.value!!.time)
+            else Timestamp(Calendar.getInstance().time)
+
+        val endTimestamp =
+            if (isEvent) Timestamp(Calendar.getInstance().time)
+            else startTimestamp
+
         // Create Post object to upload to Firebase
-        // val newPost = Post(userid, title, geoPoint, info, tag, imageReference.path, icon, color)
-        val newPost = Post("", title, geoPoint, info, tag, imageURL, icon, color, isEvent)
-        FirestoreDatabase().addPost(newPost)
+        val newPost = Post(
+            title = title,
+            startTime = startTimestamp,
+            endTime = endTimestamp,
+            location = geoPoint,
+            info = info,
+            tag = tag,
+            iconType = icon,
+            iconColor = color,
+            isEvent = isEvent,
+            imageUrl = imageURL
+        )
+
+        FirestoreDatabase.addPost(newPost)
 
         return true
     }

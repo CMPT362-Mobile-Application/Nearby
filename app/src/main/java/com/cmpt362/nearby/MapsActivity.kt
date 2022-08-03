@@ -1,14 +1,20 @@
 package com.cmpt362.nearby
 
 import android.Manifest
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.*
 import android.graphics.drawable.Drawable
+import android.location.Criteria
+import android.location.LocationManager
 import android.media.Image
 import android.os.Bundle
+import android.view.View
 import android.view.animation.Animation
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.ActivityCompat
@@ -16,6 +22,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.drawToBitmap
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentContainer
+import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import com.cmpt362.nearby.activities.FavouriteActivity
@@ -24,6 +32,7 @@ import com.cmpt362.nearby.activities.NewPostActivity
 import com.cmpt362.nearby.animation.PinDetailAnimation
 import com.cmpt362.nearby.classes.Color
 import com.cmpt362.nearby.classes.IconType
+import com.cmpt362.nearby.classes.Post
 import com.cmpt362.nearby.database.FirestoreDatabase
 import com.cmpt362.nearby.databinding.ActivityMapsBinding
 import com.cmpt362.nearby.fragments.PinDetailsFragment
@@ -39,6 +48,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
     // Binding for the xml file
     private lateinit var binding: ActivityMapsBinding
     private var detailActive: Boolean = false
+    private var detailsFragment: PinDetailsFragment? = null
 
     private lateinit var postsViewModel: PostsViewModel
 
@@ -108,10 +118,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
         mMap = googleMap
         mMap.mapType = GoogleMap.MAP_TYPE_NORMAL
 
-        // Add a marker in Sydney and move the camera
-        val sydney = LatLng(-34.0, 151.0)
-        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        if (ContextCompat.checkSelfPermission(this,
+            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            moveMapToLocation()
+        }
 
         mMap.setOnMarkerClickListener {
 
@@ -121,7 +131,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
             } else {
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(it.position));
                 mMap.moveCamera(CameraUpdateFactory.zoomTo(15.0f));
-                pinDetailsOpen()
+                // There will be posts for sure if the marker is loaded
+                val index = it.title!!.toInt()
+                val post = postsViewModel.postsList.value!!.get(index)
+                val id = postsViewModel.idList.value!!.get(index)
+                pinDetailsOpen(post, id)
                 detailActive = true
             }
 
@@ -177,15 +191,23 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
         return bitmap
     }
 
-    private fun pinDetailsOpen() {
+    private fun pinDetailsOpen(post: Post, id: String) {
         //Zoom on the pin selected
-        val detailsFragment = PinDetailsFragment()
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.pin_detail_fragment_container, detailsFragment).commit()
 
         var animation: Animation? = null
         animation = PinDetailAnimation(binding.pinDetailFragmentContainer, 1000, 0)
         animation.duration = 1000
+        animation.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationEnd(animation: Animation?) {}
+            override fun onAnimationRepeat(animation: Animation?) {}
+
+            override fun onAnimationStart(animation: Animation?) {
+                detailsFragment = PinDetailsFragment(post, id)
+                val fragmentTransaction = supportFragmentManager.beginTransaction()
+                fragmentTransaction.replace(R.id.pin_detail_fragment_container, detailsFragment!!).commit()
+                binding.pinDetailFragmentContainer.visibility = View.VISIBLE
+            }
+        })
         mMap.uiSettings.isScrollGesturesEnabled = false;
         mMap.uiSettings.isRotateGesturesEnabled = false;
         mMap.uiSettings.isZoomControlsEnabled = false;
@@ -199,6 +221,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
         var animation: Animation? = null
         animation = PinDetailAnimation(binding.pinDetailFragmentContainer, 1000, 1)
         animation.duration = 1000
+        animation.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(animation: Animation?) {}
+            override fun onAnimationRepeat(animation: Animation?) {}
+
+            override fun onAnimationEnd(animation: Animation?) {
+                // Remember to destroy the fragment
+                binding.pinDetailFragmentContainer.visibility = View.GONE
+                val fragmentTransaction = supportFragmentManager.beginTransaction()
+                fragmentTransaction.remove(detailsFragment!!).commit()
+                detailsFragment = null
+            }
+        })
         mMap.uiSettings.isScrollGesturesEnabled = true;
         mMap.uiSettings.isScrollGesturesEnabled = true;
         mMap.uiSettings.isRotateGesturesEnabled = true;
@@ -209,4 +243,41 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
         binding.pinDetailFragmentContainer.startAnimation(animation)
     }
 
+    private fun moveMapToLocation() {
+        try {
+            val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
+            val criteria = Criteria()
+            criteria.accuracy = Criteria.ACCURACY_FINE
+            val provider = locationManager.getBestProvider(criteria, true)
+            val location = locationManager.getLastKnownLocation(provider!!)
+            if (location != null) {
+                val latitude = location.latitude
+                val longitude = location.longitude
+                val latLng = LatLng(latitude, longitude)
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15.0f))
+            }
+        } catch (e: SecurityException) {
+
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 0 && permissions.contains(Manifest.permission.ACCESS_FINE_LOCATION)) {
+            moveMapToLocation()
+        }
+    }
+
+    override fun onBackPressed() {
+        if (detailActive) {
+            pinDetailsClose()
+            detailActive = false
+        } else {
+            finish()
+        }
+    }
 }

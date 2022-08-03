@@ -28,19 +28,28 @@
                 android:scaleType="centerInside"
                 android:src="@drawable/heart_grey" />
         </RelativeLayout>
+
         <TextView
-            android:layout_width="350dp"
+            android:id="@+id/pin_detail_title"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:text="TITLE PLACEHOLDER"
-            android:textSize="30dp"
+            android:textSize="24sp"
             android:textStyle="bold"/>
         <ImageView
-            android:layout_width="350dp"
-            android:layout_height="wrap_content"
+            android:id="@+id/pin_detail_post_image"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:src="@drawable/ic_launcher_background"/>
         <LinearLayout
-            android:layout_width="350dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:orientation="vertical">
             <TextView
                 android:layout_width="wrap_content"
@@ -49,6 +58,7 @@
                 android:textSize="20dp"
                 android:textStyle="bold"/>
             <TextView
+                android:id="@+id/pin_detail_location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="LOCATION PLACEHOLDER"/>
@@ -56,23 +66,29 @@
 
         <LinearLayout
             android:layout_marginTop="20dp"
-            android:layout_width="350dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
             <TextView
+                android:id="@+id/pin_detail_time_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Time"
                 android:textSize="20dp"
                 android:textStyle="bold"/>
             <TextView
+                android:id="@+id/pin_detail_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="TIME PLACEHOLDER"/>
         </LinearLayout>
         <LinearLayout
             android:layout_marginTop="20dp"
-            android:layout_width="350dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
             <TextView
@@ -82,6 +98,7 @@
                 android:textSize="20dp"
                 android:textStyle="bold"/>
             <TextView
+                android:id="@+id/pin_detail_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="DESCRIPTION PLACEHOLDER"/>
