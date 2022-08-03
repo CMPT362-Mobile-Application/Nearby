@@ -9,7 +9,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.cmpt362.nearby.R
 import com.cmpt362.nearby.activities.CommentActivity
@@ -17,10 +19,15 @@ import com.cmpt362.nearby.classes.GlideApp
 import com.cmpt362.nearby.classes.Post
 import com.cmpt362.nearby.classes.Util
 import com.cmpt362.nearby.databinding.FragmentPinDetailsBinding
+import com.cmpt362.nearby.viewmodels.CommentViewModel
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 
 class PinDetailsFragment(val post: Post, val id: String) : Fragment(R.layout.fragment_pin_details) {
+    private val commentViewModel: CommentViewModel by viewModels {
+        Util.CommentViewModelFactory(id)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -72,6 +79,15 @@ class PinDetailsFragment(val post: Post, val id: String) : Fragment(R.layout.fra
 
         // Set description
         binding.pinDetailDescription.text = post.info
+
+        commentViewModel.commentList.observe(requireActivity()) {
+            val size = it.size
+            binding.pinDetailCommentText.text = if (size == 0) {
+                "No one has commented yet!"
+            } else {
+                it[it.size - 1].info
+            }
+        }
 
         return binding.root
     }

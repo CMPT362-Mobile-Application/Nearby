@@ -1,30 +1,19 @@
 package com.cmpt362.nearby
 
 import android.Manifest
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.*
-import android.graphics.drawable.Drawable
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.location.Criteria
 import android.location.LocationManager
-import android.media.Image
 import android.os.Bundle
 import android.view.View
 import android.view.animation.Animation
-import android.widget.ImageView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.toBitmap
-import androidx.core.view.drawToBitmap
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentContainer
-import androidx.fragment.app.FragmentContainerView
-import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import com.cmpt362.nearby.activities.FavouriteActivity
 import com.cmpt362.nearby.activities.FilterActivity
@@ -33,13 +22,16 @@ import com.cmpt362.nearby.animation.PinDetailAnimation
 import com.cmpt362.nearby.classes.Color
 import com.cmpt362.nearby.classes.IconType
 import com.cmpt362.nearby.classes.Post
-import com.cmpt362.nearby.database.FirestoreDatabase
 import com.cmpt362.nearby.databinding.ActivityMapsBinding
 import com.cmpt362.nearby.fragments.PinDetailsFragment
 import com.cmpt362.nearby.viewmodels.PostsViewModel
-import com.google.android.gms.maps.*
-import com.google.android.gms.maps.model.*
-import com.google.android.material.navigation.NavigationBarView
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
@@ -250,12 +242,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
             criteria.accuracy = Criteria.ACCURACY_FINE
             val provider = locationManager.getBestProvider(criteria, true)
             val location = locationManager.getLastKnownLocation(provider!!)
-            if (location != null) {
-                val latitude = location.latitude
-                val longitude = location.longitude
-                val latLng = LatLng(latitude, longitude)
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15.0f))
-            }
+            val latitude = location?.latitude
+            val longitude = location?.longitude
+            val latLng = LatLng(latitude!!, longitude!!)
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15.0f))
         } catch (e: SecurityException) {
 
         }
