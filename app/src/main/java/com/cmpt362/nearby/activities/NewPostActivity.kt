@@ -360,12 +360,12 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
 
         // Category
         val tag = binding.addpostCategoryspinner.selectedItem as String
-        var icon : IconType = IconType.FOOD
-        var color : Color = Color.BLUE
-        if (binding.addpostCategoryspinner.selectedItemPosition < IconType.values().size) {
-            icon = IconType.fromInt(binding.addpostCategoryspinner.selectedItemPosition)!!
-            color = Color.fromInt(binding.addpostCategoryspinner.selectedItemPosition)!!
-        }
+        var icon : IconType = IconType.fromInt(binding.addpostIconGroup.checkedRadioButtonId)
+        var color : Color = Color.fromInt(binding.addpostColorGroup.checkedRadioButtonId)
+//        if (binding.addpostCategoryspinner.selectedItemPosition < IconType.values().size) {
+//            icon = IconType.fromInt(binding.addpostCategoryspinner.selectedItemPosition)!!
+//            color = Color.fromInt(binding.addpostCategoryspinner.selectedItemPosition)!!
+//        }
 
         // Event data
         val isEvent = binding.addpostEvent.isChecked
