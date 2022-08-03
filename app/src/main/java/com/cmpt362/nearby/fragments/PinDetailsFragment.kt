@@ -39,8 +39,10 @@ class PinDetailsFragment(val post: Post, val id: String) : Fragment(R.layout.fra
         val binding = FragmentPinDetailsBinding.inflate(inflater, container, false)
         //myFavouriteViewModel = FavouriteViewModel(id)
 
-        myFavouriteViewModel.favouritesList.observe(viewLifecycleOwner) { it ->
-            Log.i("favouritesListener", "PinDetailsFragment: " + it.toString())
+        activity?.let {
+            myFavouriteViewModel.favouritesList.observe(it) { it ->
+                Log.i("favouritesListener", "PinDetailsFragment 1: " + it.toString())
+            }
         }
 
         binding.pinDetailComment.setOnClickListener {
