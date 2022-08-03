@@ -1,31 +1,18 @@
 package com.cmpt362.nearby.viewmodels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.cmpt362.nearby.classes.Comment
 import com.cmpt362.nearby.database.FirestoreDatabase
 
 class CommentViewModel(private val postId: String): ViewModel() {
     val replyingTo: MutableLiveData<Long> = MutableLiveData(Comment.NO_REF)
 
-    private val _commentList: MutableLiveData<ArrayList<Comment>> =
-        MutableLiveData(arrayListOf())
+    private val _commentList =
+        FirestoreDatabase.getComments(postId).asLiveData(viewModelScope.coroutineContext)
     val commentList: LiveData<ArrayList<Comment>> get() { return _commentList }
 
-    init {
-        updateComments()
-    }
-
-    private fun updateComments() {
-        FirestoreDatabase.registerCommentsListener(postId) { comments ->
-            _commentList.value = comments }
-    }
-
     fun addComment(commentTxt: String) {
-        replyingTo.value?.let {
-            FirestoreDatabase.addComment(Comment(0, commentTxt, it), postId)
-        }
+        FirestoreDatabase.addComment(Comment(0, commentTxt, replyingTo.value!!), postId)
     }
     
 }

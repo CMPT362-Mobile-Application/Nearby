@@ -12,7 +12,9 @@ import com.cmpt362.nearby.viewmodels.CommentViewModel
 
 class CommentActivity : AppCompatActivity(){
     private lateinit var binding: ActivityCommentBinding
-    private lateinit var postId: String
+    private val postId: String by lazy {
+        intent.extras?.getString("postId", "").toString()
+    }
 
     // use lazy initialization
     private val commentViewModel: CommentViewModel by viewModels {
@@ -21,26 +23,25 @@ class CommentActivity : AppCompatActivity(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        postId = intent.extras?.getString("postId", "").toString()
 
         val newCommentFragment = NewCommentFragment(postId)
         val transaction = supportFragmentManager.beginTransaction()
         transaction.add(R.id.new_comment_fragment_container, newCommentFragment).commit()
 
-        val commentListAdapter = commentViewModel.commentList.value?.let {
-            CommentListAdapter(it, newCommentFragment::setReplyToId) }
+        val commentListAdapter = if (commentViewModel.commentList.value != null) {
+            CommentListAdapter(commentViewModel.commentList.value!!,
+                newCommentFragment::setReplyingTo)
+        } else {
+            CommentListAdapter(arrayListOf(), newCommentFragment::setReplyingTo)
+        }
+        commentListAdapter.setHasStableIds(true)
 
         binding = ActivityCommentBinding.inflate(layoutInflater)
         binding.commentRecycler.adapter = commentListAdapter
 
         // set comments adapter to change whenever value in viewModel is updated
         commentViewModel.commentList.observe(this) { comments ->
-            comments?.let {
-                commentViewModel.commentList.value?.let {
-                    commentListAdapter?.updateItems(comments)
-                    binding.commentRecycler.adapter = commentListAdapter
-                }
-            }
+                commentListAdapter.updateItems(comments)
         }
 
         setContentView(binding.root)

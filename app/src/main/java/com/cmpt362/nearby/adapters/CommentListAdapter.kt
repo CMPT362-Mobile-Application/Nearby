@@ -25,6 +25,7 @@ class CommentListAdapter(
     }
 
     override fun onBindViewHolder(holder: CommentViewHolder, position: Int) {
+        holder.setIsRecyclable(false) // not ideal but it fixes weird glitches
         val comment = comments[position]
 
         binding.commentId.text = comment.id.toString()
@@ -34,6 +35,7 @@ class CommentListAdapter(
         // if no reply, make the replyId textview invisible for the comment item
         if (comment.replyId != Comment.NO_REF) {
             binding.commentReplyId.text = String.format("> %d", comment.replyId)
+            binding.commentReplyId.visibility = View.VISIBLE
         } else {
             binding.commentReplyId.visibility = View.GONE
         }
@@ -47,8 +49,16 @@ class CommentListAdapter(
         return comments.size
     }
 
-    fun updateItems(newItems: ArrayList<Comment>?) {
-        comments = newItems ?: arrayListOf()
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
+
+    fun updateItems(newItems: ArrayList<Comment>) {
+        comments = newItems
         notifyDataSetChanged()
     }
 }

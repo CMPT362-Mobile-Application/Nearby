@@ -3,10 +3,10 @@ package com.cmpt362.nearby.database
 import android.util.Log
 import com.cmpt362.nearby.classes.Comment
 import com.cmpt362.nearby.classes.Post
-import com.google.firebase.database.DataSnapshot
 import com.google.firebase.firestore.*
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlin.properties.Delegates
+import kotlinx.coroutines.flow.callbackFlow
 
 object FirestoreDatabase {
     private val COMMENTS = "comments"
@@ -98,6 +98,21 @@ object FirestoreDatabase {
         listeners[COMMENT_LISTENER_KEY] = commentListener
     }
 
+    fun getComments(postId: String): Flow<ArrayList<Comment>> = callbackFlow {
+       val listenerRegistration = FirebaseFirestore.getInstance()
+           .collection(COMMENTS).document(postId)
+           .addSnapshotListener { document, _ ->
+               if (document != null) {
+                   val commentList = document.toObject(CommentList::class.java)
+                   trySend(commentList!!.items).isSuccess
+               }
+           }
+
+        awaitClose {
+            listenerRegistration.remove()
+        }
+    }
+
 
     fun addComment(comment: Comment, postId: String) {
         val commentRef = FirebaseFirestore.getInstance()
@@ -106,21 +121,21 @@ object FirestoreDatabase {
         commentRef.get().addOnSuccessListener {
             val id = it.data?.get(COMMENT_COUNT) as Long
 
-            commentRef.update(COMMENT_ITEMS, FieldValue.arrayUnion(
+            commentRef.update(
+                COMMENT_ITEMS, FieldValue.arrayUnion(
                 hashMapOf(
                     "id" to id,
                     "info" to comment.info,
                     "timestamp" to comment.timestamp,
-                    "replyId" to comment.replyId)))
-
-            commentRef.update(COMMENT_COUNT, FieldValue.increment(1))
+                    "replyId" to comment.replyId)),
+                COMMENT_COUNT, FieldValue.increment(1))
         }
 
     }
 
 
     private data class CommentList (
-        val itemCount: Long = 0L,
+        val counter: Long = 0L,
         val items: ArrayList<Comment> = arrayListOf()
     )
 
