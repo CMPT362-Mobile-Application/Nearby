@@ -7,11 +7,14 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.*
 import android.graphics.drawable.Drawable
+import android.location.Criteria
+import android.location.LocationManager
 import android.media.Image
 import android.os.Bundle
 import android.view.View
 import android.view.animation.Animation
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.ActivityCompat
@@ -115,10 +118,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
         mMap = googleMap
         mMap.mapType = GoogleMap.MAP_TYPE_NORMAL
 
-        // Add a marker in Sydney and move the camera
-        val sydney = LatLng(-34.0, 151.0)
-        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        if (ContextCompat.checkSelfPermission(this,
+            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            moveMapToLocation()
+        }
 
         mMap.setOnMarkerClickListener {
 
@@ -238,6 +241,33 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
         mMap.uiSettings.isTiltGesturesEnabled = true;
         mMap.uiSettings.isScrollGesturesEnabledDuringRotateOrZoom = true;
         binding.pinDetailFragmentContainer.startAnimation(animation)
+    }
+
+    private fun moveMapToLocation() {
+        try {
+            val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
+            val criteria = Criteria()
+            criteria.accuracy = Criteria.ACCURACY_FINE
+            val provider = locationManager.getBestProvider(criteria, true)
+            val location = locationManager.getLastKnownLocation(provider!!)
+            val latitude = location?.latitude
+            val longitude = location?.longitude
+            val latLng = LatLng(latitude!!, longitude!!)
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15.0f))
+        } catch (e: SecurityException) {
+
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 0 && permissions.contains(Manifest.permission.ACCESS_FINE_LOCATION)) {
+            moveMapToLocation()
+        }
     }
 
     override fun onBackPressed() {
