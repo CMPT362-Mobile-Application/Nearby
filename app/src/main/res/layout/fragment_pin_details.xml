@@ -13,11 +13,12 @@
             android:padding="10dp">
 
             <TextView
+                android:id="@+id/pin_detail_like_text"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
+                android:layout_marginRight="10dp"
                 android:layout_toLeftOf="@+id/pin_detail_like_button"
                 android:gravity="center"
-                android:layout_marginRight="10dp"
                 android:text="3424" />
             <ImageButton
                 android:id="@+id/pin_detail_like_button"

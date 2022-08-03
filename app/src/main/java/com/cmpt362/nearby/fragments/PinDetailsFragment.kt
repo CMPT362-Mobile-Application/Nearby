@@ -89,6 +89,8 @@ class PinDetailsFragment(val post: Post, val id: String) : Fragment(R.layout.fra
 
         // Set description
         binding.pinDetailDescription.text = post.info
+        //
+        binding.pinDetailLikeText.text = "${post.favouritesCounter}"
 
         commentViewModel.commentList.observe(requireActivity()) {
             val size = it.size
@@ -103,9 +105,11 @@ class PinDetailsFragment(val post: Post, val id: String) : Fragment(R.layout.fra
             val sharedPref = activity?.getSharedPreferences("favourites", Context.MODE_PRIVATE)
             if (sharedPref != null) {
                 if (sharedPref.contains(id)) { // un favourite post
-                    FirestoreDatabase.decrementFavouritePost(id)
+                    FirestoreDatabase.changeFavouriteCounter(id, -1)
+                    binding.pinDetailLikeText.text = "${post.favouritesCounter}"
                 } else { // favourite post
-                    FirestoreDatabase.incrementFavouritePost(id)
+                    FirestoreDatabase.changeFavouriteCounter(id, 1)
+                    binding.pinDetailLikeText.text = "${post.favouritesCounter + 1}"
                 }
                 canAddFavourite = true
             }

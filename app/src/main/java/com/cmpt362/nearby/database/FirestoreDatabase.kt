@@ -1,13 +1,11 @@
 package com.cmpt362.nearby.database
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.util.Log
-import androidx.fragment.app.FragmentActivity
 import com.cmpt362.nearby.classes.Comment
 import com.cmpt362.nearby.classes.Post
-import com.google.firebase.firestore.*
-
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -27,6 +25,15 @@ object FirestoreDatabase {
         filter: DbFilter,
         callback: (ArrayList<Post>, ArrayList<String>) -> Unit) {
         restartPostsListener(FAVOURITE_LISTENER_KEY, filter, callback)
+    }
+
+    // increase the number of likes by changeAmount
+    fun changeFavouriteCounter(postId: String, changeAmount: Long) {
+        FirebaseFirestore.getInstance()
+            .collection(POSTS)
+            .document(postId)
+            .update("favouriteCounter", FieldValue.increment(changeAmount))
+
     }
 
     fun registerPostsListener(
