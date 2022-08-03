@@ -36,8 +36,4 @@ object Util {
         override fun <T : ViewModel> create(modelClass: Class<T>): T = CommentViewModel(postId) as T
     }
 
-    class FavouritesViewModelFactory(private val postId: String):
-        ViewModelProvider.NewInstanceFactory() {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T = FavouriteViewModel(postId) as T
-    }
 }

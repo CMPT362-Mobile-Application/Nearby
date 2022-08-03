@@ -10,7 +10,7 @@ import com.cmpt362.nearby.activities.FavouriteActivity
 import com.cmpt362.nearby.classes.Comment
 import com.cmpt362.nearby.database.FirestoreDatabase
 
-class FavouriteViewModel(private val postId: String): ViewModel() {
+class FavouriteViewModel(): ViewModel() {
     val state = MutableLiveData<String>()
 
     init {
