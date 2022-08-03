@@ -1,12 +1,13 @@
 package com.cmpt362.nearby.fragments
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.viewModels
+import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
@@ -17,8 +18,8 @@ import com.cmpt362.nearby.classes.Post
 import com.cmpt362.nearby.classes.Util
 import com.cmpt362.nearby.database.FirestoreDatabase
 import com.cmpt362.nearby.databinding.FragmentPinDetailsBinding
-import com.cmpt362.nearby.viewmodels.CommentViewModel
 import com.cmpt362.nearby.viewmodels.FavouriteViewModel
+import com.cmpt362.nearby.viewmodels.PostsViewModel
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 
@@ -30,6 +31,8 @@ class PinDetailsFragment(val post: Post, val id: String) : Fragment(R.layout.fra
     private val myFavouriteViewModel: FavouriteViewModel by viewModels {
         Util.FavouritesViewModelFactory(id)
     }
+    private lateinit var postsViewModel: PostsViewModel
+    private var canAddFavourite = false;
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,13 +40,8 @@ class PinDetailsFragment(val post: Post, val id: String) : Fragment(R.layout.fra
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentPinDetailsBinding.inflate(inflater, container, false)
-        //myFavouriteViewModel = FavouriteViewModel(id)
+        postsViewModel = ViewModelProvider(this).get(PostsViewModel::class.java)
 
-        activity?.let {
-            myFavouriteViewModel.favouritesList.observe(it) { it ->
-                Log.i("favouritesListener", "PinDetailsFragment 1: " + it.toString())
-            }
-        }
 
         binding.pinDetailComment.setOnClickListener {
             val intent = Intent(activity, CommentActivity::class.java)
@@ -66,9 +64,65 @@ class PinDetailsFragment(val post: Post, val id: String) : Fragment(R.layout.fra
 
         binding.pinDetailLikeButton.setOnClickListener() {
             println(id)
-            myFavouriteViewModel.clickFavourite(id, activity)
-            //FirestoreDatabase.incrementFavouritePost(id, activity)
+            val sharedPref = activity?.getSharedPreferences("favourites", Context.MODE_PRIVATE)
+
+            if (sharedPref != null) {
+                if (sharedPref.contains(id)) {
+                    FirestoreDatabase.decrementFavouritePost(id)
+                } else {
+                    FirestoreDatabase.incrementFavouritePost(id)
+                }
+                canAddFavourite = true
+            }
         }
+
+        val sharedPref = activity?.getSharedPreferences("favourites", Context.MODE_PRIVATE)
+        val likeButton: ImageButton = binding.pinDetailLikeButton
+        if (sharedPref != null) {
+            if (sharedPref.contains(id)) {
+                likeButton.setImageResource(com.cmpt362.nearby.R.drawable.heart_red)
+            }
+        }
+
+        postsViewModel.postsList.observe(viewLifecycleOwner) {
+            if (canAddFavourite) {
+                Log.i("favouritesListener", "postsViewModel has been updated")
+
+                val sharedPref = activity?.getSharedPreferences("favourites", Context.MODE_PRIVATE)
+                val likeButton: ImageButton = binding.pinDetailLikeButton
+                if (sharedPref != null) {
+                    if (sharedPref.contains(id)) {
+                        with (sharedPref.edit()) {
+                            remove(id)
+                            apply()
+                        }
+                        likeButton.setImageResource(com.cmpt362.nearby.R.drawable.heart_grey)
+                    } else {
+                        with (sharedPref.edit()) {
+                            putString(id, id)
+                            apply()
+                        }
+                        likeButton.setImageResource(com.cmpt362.nearby.R.drawable.heart_red)
+                    }
+                }
+
+                canAddFavourite = false
+            }
+        }
+
+        //myFavouriteViewModel = FavouriteViewModel(id)
+
+//        myFavouriteViewModel.favouritesList.observe(viewLifecycleOwner) { it ->
+//            Log.i("favouritesListener", "PinDetailsFragment 1: " + it.toString())
+////               document ->
+////                val sharedPref = activity?.getSharedPreferences("favourites", Context.MODE_PRIVATE)
+////                if (sharedPref != null) {
+////                    with (sharedPref.edit()) {
+////                        putString(postId, postId)
+////                        apply()
+////                    }
+////                }
+//        }
 
         return binding.root
     }

@@ -1,5 +1,6 @@
 package com.cmpt362.nearby.viewmodels
 
+import android.content.Context
 import android.util.Log
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
@@ -22,15 +23,15 @@ class FavouriteViewModel(private val postId: String): ViewModel() {
     }
 
     private fun updateFavourites() {
-        FirestoreDatabase.registerFavouritesListener(postId) { favourite ->
-            Log.i("favouritesListener", "updateFavourites: " + favourite)
-            _favouritesList.add(favourite)
-            favouritesList.postValue(_favouritesList)
-            Log.i("favouritesListener", "updateFavourites: " + _favouritesList)
-        }
+//        FirestoreDatabase.registerFavouritesListener(postId) { favourite ->
+//            Log.i("favouritesListener", "updateFavourites: " + favourite)
+//            _favouritesList.add(favourite)
+//            favouritesList.postValue(_favouritesList)
+//            Log.i("favouritesListener", "updateFavourites: " + _favouritesList)
+//        }
     }
 
-    fun clickFavourite(postId: String, activity: FragmentActivity?) {
-        FirestoreDatabase.incrementFavouritePost(postId, activity)
-    }
+//    fun clickFavourite(postId: String, activity: FragmentActivity?) {
+//        FirestoreDatabase.incrementFavouritePost(postId, activity)
+//    }
 }

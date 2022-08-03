@@ -43,17 +43,10 @@ object FirestoreDatabase {
         listeners[FAVOURITE_LISTENER_KEY] = favouritesListener
     }
 
-    fun incrementFavouritePost(postId: String, activity: FragmentActivity?) {
+    fun incrementFavouritePost(postId: String) {
         val postRef = FirebaseFirestore.getInstance().collection(POSTS).document(postId)
         postRef.update("favouritesCounter", FieldValue.increment(1))
-            .addOnSuccessListener { document ->
-                val sharedPref = activity?.getSharedPreferences("favourites", Context.MODE_PRIVATE)
-                if (sharedPref != null) {
-                    with (sharedPref.edit()) {
-                        putString(postId, postId)
-                        apply()
-                    }
-                }
+            .addOnSuccessListener {
                 Log.d("incrementFavouritePost", "incrementFavouritePost worked with $postId")
             }
             .addOnFailureListener { exception ->
