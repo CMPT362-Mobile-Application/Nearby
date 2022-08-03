@@ -58,10 +58,10 @@ object FirestoreDatabase {
         val postRef = FirebaseFirestore.getInstance().collection(POSTS).document(postId)
         postRef.update("favouritesCounter", FieldValue.increment(-1))
             .addOnSuccessListener { document ->
-                //Log.d("incrementFavouritePost", "$document")
+                Log.d("decrementFavouritePost", "decrementFavouritePost worked with $document")
             }
             .addOnFailureListener { exception ->
-                //Log.d("incrementFavouritePost", "failed with", exception)
+                Log.d("decrementFavouritePost", "decrementFavouritePost failed with", exception)
             }
     }
 

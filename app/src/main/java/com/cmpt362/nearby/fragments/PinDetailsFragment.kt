@@ -26,11 +26,6 @@ import com.google.firebase.storage.ktx.storage
 
 class PinDetailsFragment(val post: Post, val id: String) : Fragment(R.layout.fragment_pin_details) {
 
-    //private lateinit var myFavouriteViewModel: FavouriteViewModel
-
-    private val myFavouriteViewModel: FavouriteViewModel by viewModels {
-        Util.FavouritesViewModelFactory(id)
-    }
     private lateinit var postsViewModel: PostsViewModel
     private var canAddFavourite = false;
 
@@ -41,7 +36,6 @@ class PinDetailsFragment(val post: Post, val id: String) : Fragment(R.layout.fra
     ): View {
         val binding = FragmentPinDetailsBinding.inflate(inflater, container, false)
         postsViewModel = ViewModelProvider(this).get(PostsViewModel::class.java)
-
 
         binding.pinDetailComment.setOnClickListener {
             val intent = Intent(activity, CommentActivity::class.java)
@@ -63,24 +57,23 @@ class PinDetailsFragment(val post: Post, val id: String) : Fragment(R.layout.fra
         }
 
         binding.pinDetailLikeButton.setOnClickListener() {
-            println(id)
             val sharedPref = activity?.getSharedPreferences("favourites", Context.MODE_PRIVATE)
-
             if (sharedPref != null) {
-                if (sharedPref.contains(id)) {
+                if (sharedPref.contains(id)) { // un favourite post
                     FirestoreDatabase.decrementFavouritePost(id)
-                } else {
+                } else { // favourite post
                     FirestoreDatabase.incrementFavouritePost(id)
                 }
                 canAddFavourite = true
             }
         }
 
+        // check if we already favourited the post
         val sharedPref = activity?.getSharedPreferences("favourites", Context.MODE_PRIVATE)
         val likeButton: ImageButton = binding.pinDetailLikeButton
         if (sharedPref != null) {
             if (sharedPref.contains(id)) {
-                likeButton.setImageResource(com.cmpt362.nearby.R.drawable.heart_red)
+                likeButton.setImageResource(R.drawable.heart_red)
             }
         }
 
@@ -91,38 +84,23 @@ class PinDetailsFragment(val post: Post, val id: String) : Fragment(R.layout.fra
                 val sharedPref = activity?.getSharedPreferences("favourites", Context.MODE_PRIVATE)
                 val likeButton: ImageButton = binding.pinDetailLikeButton
                 if (sharedPref != null) {
-                    if (sharedPref.contains(id)) {
+                    if (sharedPref.contains(id)) { // un favourite post
                         with (sharedPref.edit()) {
                             remove(id)
                             apply()
                         }
-                        likeButton.setImageResource(com.cmpt362.nearby.R.drawable.heart_grey)
-                    } else {
+                        likeButton.setImageResource(R.drawable.heart_grey)
+                    } else { // favourite post
                         with (sharedPref.edit()) {
                             putString(id, id)
                             apply()
                         }
-                        likeButton.setImageResource(com.cmpt362.nearby.R.drawable.heart_red)
+                        likeButton.setImageResource(R.drawable.heart_red)
                     }
                 }
-
                 canAddFavourite = false
             }
         }
-
-        //myFavouriteViewModel = FavouriteViewModel(id)
-
-//        myFavouriteViewModel.favouritesList.observe(viewLifecycleOwner) { it ->
-//            Log.i("favouritesListener", "PinDetailsFragment 1: " + it.toString())
-////               document ->
-////                val sharedPref = activity?.getSharedPreferences("favourites", Context.MODE_PRIVATE)
-////                if (sharedPref != null) {
-////                    with (sharedPref.edit()) {
-////                        putString(postId, postId)
-////                        apply()
-////                    }
-////                }
-//        }
 
         return binding.root
     }
