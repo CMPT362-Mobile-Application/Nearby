@@ -32,7 +32,7 @@ object FirestoreDatabase {
         FirebaseFirestore.getInstance()
             .collection(POSTS)
             .document(postId)
-            .update("favouriteCounter", FieldValue.increment(changeAmount))
+            .update("favouritesCounter", FieldValue.increment(changeAmount))
 
     }
 
