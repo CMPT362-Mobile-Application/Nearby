@@ -25,6 +25,7 @@ class CommentListAdapter(
     }
 
     override fun onBindViewHolder(holder: CommentViewHolder, position: Int) {
+        holder.setIsRecyclable(false) // not ideal but it fixes weird glitches
         val comment = comments[position]
 
         binding.commentId.text = comment.id.toString()
