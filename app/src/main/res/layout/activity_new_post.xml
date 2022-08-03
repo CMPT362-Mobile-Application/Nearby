@@ -20,36 +20,29 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:padding="16dp">
 
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1"/>
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="8dp"
+                android:id="@+id/addpost_imageview"
+                android:visibility="gone"/>
 
             <Button
                 android:id="@+id/addpost_addimagebutton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="@string/addpost_addimage"/>
-
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1"/>
-
-            <ImageView
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:scaleType="centerCrop"
-                android:id="@+id/addpost_imageview"/>
-
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1"/>
+                android:layout_gravity="center_horizontal"
+                android:text="@string/addpost_addimage"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:textColor="#1A60ED"
+                android:textStyle="bold"
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                android:maxLines="1" />
         </LinearLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -83,6 +76,84 @@
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Icon"
+            android:textSize="16sp"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="8dp"/>
+
+        <RadioGroup
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:id="@+id/addpost_icon_group">
+            <RadioButton
+                android:text="None"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/addpost_icon_group_none"/>
+            <RadioButton
+                android:text="Food"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/addpost_icon_group_food"/>
+            <RadioButton
+                android:text="Game"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/addpost_icon_group_game"/>
+            <RadioButton
+                android:text="Sport"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/addpost_icon_group_sport"/>
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Color"
+            android:textSize="16sp"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="8dp"/>
+
+        <RadioGroup
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:id="@+id/addpost_color_group">
+            <RadioButton
+                android:text="Grey"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/addpost_color_group_grey"/>
+            <RadioButton
+                android:text="Red"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/addpost_color_group_red"/>
+            <RadioButton
+                android:text="Green"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/addpost_color_group_green"/>
+            <RadioButton
+                android:text="Blue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/addpost_color_group_blue"/>
+        </RadioGroup>
+
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/addpost_event"
             android:layout_width="match_parent"
@@ -104,7 +175,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:text="@string/addpost_eventstart"/>
+                android:text="@string/addpost_eventstart"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:textColor="#1A60ED"
+                android:textStyle="bold"
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                android:maxLines="1"/>
 
             <TextView
                 android:id="@+id/addpost_eventstarttext"
@@ -130,7 +207,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:text="@string/addpost_eventend"/>
+                android:text="@string/addpost_eventend"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:textColor="#1A60ED"
+                android:textStyle="bold"
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                android:maxLines="1"/>
 
             <TextView
                 android:id="@+id/addpost_eventendtext"
@@ -152,7 +235,13 @@
                 android:id="@+id/addpost_setlocation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/addpost_location"/>
+                android:text="@string/addpost_location"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:textColor="#1A60ED"
+                android:textStyle="bold"
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                android:maxLines="1"/>
 
             <TextView
                 android:id="@+id/addpost_currlocation"
@@ -193,14 +282,26 @@
                 android:layout_height="wrap_content"
                 android:text="@string/addpost_create"
                 android:layout_weight="1"
-                android:layout_marginEnd="32dp"/>
+                android:layout_marginEnd="32dp"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:textColor="#1A60ED"
+                android:textStyle="bold"
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                android:maxLines="1"/>
 
             <Button
                 android:id="@+id/addpost_cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/addpost_cancel"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:textColor="#FF3333"
+                android:textStyle="bold"
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                android:maxLines="1"/>
         </LinearLayout>
 
     </LinearLayout>

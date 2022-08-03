@@ -8,7 +8,8 @@
 
     <!--  Add Post Activity  -->
     <string name="addpost_title">Add Post</string>
-    <string name="addpost_addimage">Add Image</string>
+    <string name="addpost_addimage">+ Add Image</string>
+    <string name="addpost_changeimage">Change Image</string>
     <string name="addpost_name">Title</string>
     <string name="addpost_category">Category</string>
     <string name="addpost_event">Is Event?</string>
