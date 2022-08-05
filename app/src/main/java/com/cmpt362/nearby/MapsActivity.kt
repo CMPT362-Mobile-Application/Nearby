@@ -6,10 +6,13 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.location.Criteria
+import android.location.Location
+import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.view.View
 import android.view.animation.Animation
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.ActivityCompat
@@ -32,37 +35,23 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import java.security.Permission
 
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
     // Google map variable
     private lateinit var mMap: GoogleMap
     // Binding for the xml file
     private lateinit var binding: ActivityMapsBinding
     private var detailActive: Boolean = false
+    private var sentUserToLocation: Boolean = false
     private var detailsFragment: PinDetailsFragment? = null
 
     private lateinit var postsViewModel: PostsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        //Ask for Permissions
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED
-            || ContextCompat.checkSelfPermission(this,
-                Manifest.permission.READ_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED
-            || ContextCompat.checkSelfPermission(this,
-                Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
-            || ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.ACCESS_FINE_LOCATION),
-                0
-            )
-        }
+        askForPermissions()
 
         // Create the binding and set content view
         binding = ActivityMapsBinding.inflate(layoutInflater)
@@ -242,16 +231,48 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
             criteria.accuracy = Criteria.ACCURACY_FINE
             val provider = locationManager.getBestProvider(criteria, true)
             val location = locationManager.getLastKnownLocation(provider!!)
-            if (location != null) {
+            if (location != null && !sentUserToLocation) {
                 val latitude = location.latitude
                 val longitude = location.longitude
-                val latLng = LatLng(latitude!!, longitude!!)
+                val latLng = LatLng(latitude, longitude)
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15.0f))
+                sentUserToLocation = true
             }
-            // TODO: Do location request listener for instant update
+            locationManager.requestLocationUpdates(provider, 1000, 0f, this)
         } catch (e: SecurityException) {
 
         }
+    }
+
+    override fun onLocationChanged(location: Location) {
+        if (!sentUserToLocation) {
+            val latLng = LatLng(location.latitude, location.longitude)
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15.0f))
+            sentUserToLocation = true
+        }
+    }
+
+    private fun askForPermissions() {
+        val permissions = ArrayList<String>()
+        //Ask for Permissions
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED)
+            permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED)
+            permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+            permissions.add(Manifest.permission.CAMERA)
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
+
+        if (permissions.size > 0)
+            ActivityCompat.requestPermissions(this, permissions.toTypedArray(),0)
     }
 
     override fun onRequestPermissionsResult(
@@ -260,8 +281,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 0 && permissions.contains(Manifest.permission.ACCESS_FINE_LOCATION)) {
-            moveMapToLocation()
+        if (requestCode == 0) {
+            if (!grantResults.contains(PackageManager.PERMISSION_DENIED)) { // no denied permissions
+                Toast.makeText(this, getString(R.string.perms_granted), Toast.LENGTH_SHORT).show()
+                moveMapToLocation()
+            } else {
+                Toast.makeText(this, getString(R.string.perms_required), Toast.LENGTH_SHORT).show()
+                finish()
+            }
         }
     }
 
