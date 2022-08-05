@@ -420,7 +420,7 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             else Timestamp(Calendar.getInstance().time)
 
         val endTimestamp =
-            if (isEvent) Timestamp(Calendar.getInstance().time)
+            if (isEvent) Timestamp(newPostViewModel.endCalendar.value!!.time)
             else startTimestamp
 
         // Create Post object to upload to Firebase
@@ -433,7 +433,7 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             tag = tag,
             iconType = icon.value,
             iconColor = color.value,
-            isEvent = isEvent,
+            event = isEvent,
             imageUrl = imageURL
         )
 

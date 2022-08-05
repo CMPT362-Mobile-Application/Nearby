@@ -28,6 +28,11 @@ object Util {
         }
     }
 
+    fun timestampToDateStrPost(timestamp: Timestamp): String {
+        val df = SimpleDateFormat("dd/MM/yyyy hh:mm aa", Locale.US)
+        return df.format(timestamp.toDate())
+    }
+
     // https://stackoverflow.com/questions/46283981/android-viewmodel-additional-arguments
     // custom ViewModel factory to pass in additional postId parameter when creating
     // CommentViewModel

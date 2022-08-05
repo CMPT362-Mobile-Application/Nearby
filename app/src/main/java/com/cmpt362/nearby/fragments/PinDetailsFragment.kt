@@ -79,12 +79,12 @@ class PinDetailsFragment(val post: Post, val id: String) : Fragment(R.layout.fra
             binding.pinDetailLocation.text = "${post.location.latitude}, ${post.location.longitude}"
 
         // Set time
-        if (post.isEvent) {
-            val startText = Util.timestampToDateStr(post.startTime)
-            val endText = Util.timestampToDateStr(post.endTime)
+        if (post.event) {
+            val startText = Util.timestampToDateStrPost(post.startTime)
+            val endText = Util.timestampToDateStrPost(post.endTime)
             binding.pinDetailTime.text = "$startText to $endText"
         } else {
-            binding.pinDetailTime.text = Util.timestampToDateStr(post.startTime)
+            binding.pinDetailTime.text = Util.timestampToDateStrPost(post.startTime)
         }
 
         // Set description
