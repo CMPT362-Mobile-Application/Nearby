@@ -1,6 +1,9 @@
 package com.cmpt362.nearby.activities
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.Button
 import android.widget.ListView
 import android.widget.TextView
@@ -71,7 +74,14 @@ class FavouriteActivity : AppCompatActivity() {
         favouriteListAdapter = FavouriteListAdapter(this)
         listView.adapter = favouriteListAdapter
 
-
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setContentView(binding.root)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            finish()
+        }
+        return true
     }
 }

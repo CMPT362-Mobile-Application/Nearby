@@ -19,6 +19,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.telephony.TelephonyManager
+import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
@@ -221,6 +222,7 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
         if (savedInstanceState?.getString(LOCATION_TEXT_KEY) != null)
             binding.addpostCurrlocation.text = savedInstanceState.getString(LOCATION_TEXT_KEY)
 
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setContentView(binding.root)
     }
 
@@ -447,5 +449,12 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
         outState.putString(START_TEXT_KEY, binding.addpostEventstarttext.text.toString())
         outState.putString(END_TEXT_KEY, binding.addpostEventendtext.text.toString())
         outState.putString(LOCATION_TEXT_KEY, binding.addpostCurrlocation.text.toString())
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            finish()
+        }
+        return true
     }
 }
