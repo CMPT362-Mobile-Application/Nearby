@@ -5,6 +5,7 @@ import android.app.TimePickerDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.cmpt362.nearby.adapters.FilterListViewAdapter
@@ -163,6 +164,14 @@ class FilterActivity : AppCompatActivity() {
             dialog.show()
         }
 
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setContentView(binding.root)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            finish()
+        }
+        return true
     }
 }

@@ -50,23 +50,29 @@
         </activity>
         <activity
             android:name=".activities.CommentActivity"
-            android:parentActivityName=".activities.CommentActivity"
-            android:label="Comments" />
+            android:label="Comments"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"/>
         <activity
             android:name=".activities.FilterActivity"
-            android:parentActivityName=".MapsActivity"
-            android:label="Filter Posts" />
+            android:label="Filter Posts"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"/>
         <activity
             android:name=".activities.NewPostActivity"
-            android:parentActivityName=".MapsActivity"
-            android:label="New Post"/>
+            android:label="New Post"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"/>
         <activity
             android:name=".activities.FavouriteActivity"
-            android:parentActivityName=".MapsActivity"
-            android:label="Saved Posts" />
+            android:label="Saved Posts"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"/>
         <activity
             android:name=".activities.ChooseLocationActivity"
-            android:label="Choose a Location" />
+            android:label="Choose a Location"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"/>
 
         <provider
             android:authorities="com.cmpt362.nearby"

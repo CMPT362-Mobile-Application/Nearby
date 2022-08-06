@@ -1,6 +1,7 @@
 package com.cmpt362.nearby.activities
 
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.cmpt362.nearby.R
@@ -44,7 +45,15 @@ class CommentActivity : AppCompatActivity(){
                 commentListAdapter.updateItems(comments)
         }
 
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setContentView(binding.root)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            finish()
+        }
+        return true
     }
 
 }
