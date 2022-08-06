@@ -126,6 +126,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
             return@setOnMarkerClickListener true
         }
 
+        mMap.setOnMapClickListener {
+            if (detailActive) {
+                pinDetailsClose()
+                detailActive = false
+            }
+        }
+
         postsViewModel.postsList.observe(this) {
             println("debug: Calling post list observe")
             mMap.clear()
