@@ -1,7 +1,11 @@
 <resources>
     <string name="app_name">Nearby</string>
+    <string name="mode">Day</string>
     <string name="title_activity_maps">MapsActivity</string>
     <string name="perms_required">These permissions are required to run Nearby.</string>
+    <string name="perms_required_title">Hey!</string>
+    <string name="perms_required_yes">Grant</string>
+    <string name="perms_required_no">No thanks</string>
     <string name="perms_granted">Welcome to Nearby!</string>
 
     <!--  Favourites Activity  -->

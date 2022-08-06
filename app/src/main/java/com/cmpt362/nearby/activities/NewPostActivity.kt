@@ -7,10 +7,8 @@ import android.app.TimePickerDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.ImageDecoder
-import android.graphics.Matrix
+import android.graphics.*
+import android.graphics.drawable.ColorDrawable
 import android.location.Criteria
 import android.location.LocationManager
 import android.media.ExifInterface
@@ -19,13 +17,16 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.telephony.TelephonyManager
+import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
+import android.view.Window
 import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
+import androidx.core.view.children
 import androidx.lifecycle.ViewModelProvider
 import com.cmpt362.nearby.R
 import com.cmpt362.nearby.classes.Color
@@ -240,11 +241,26 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
         builder.setItems(options, DialogInterface.OnClickListener() {
             dialog, which ->
             when (which) {
-                0 -> useCamera() // Camera option
-                1 -> useGallery() // Gallery option
+                1 -> useCamera() // Camera option
+                2 -> useGallery() // Gallery option
             }
         })
-        builder.show()
+        val dialog = builder.create()
+        dialog.listView.visibility = ListView.INVISIBLE // hide the listview first to prevent glitching
+        dialog.setOnShowListener {
+            val imageOptions = dialog.listView.children
+            for (option in imageOptions) {
+                val optionTextView = option as TextView
+                optionTextView.typeface = Typeface.DEFAULT_BOLD
+                optionTextView.gravity = Gravity.CENTER
+                optionTextView.setTextColor(android.graphics.Color.parseColor("#34C759"))
+            }
+            dialog.listView.addHeaderView(View(this))
+            dialog.listView.divider = ColorDrawable(android.graphics.Color.GRAY)
+            dialog.listView.dividerHeight = 1 // normal size
+            dialog.listView.visibility = ListView.VISIBLE // safe to show the options now
+        }
+        dialog.show()
     }
 
     fun useCamera() {

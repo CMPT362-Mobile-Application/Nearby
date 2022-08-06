@@ -1,15 +1,19 @@
 package com.cmpt362.nearby
 
 import android.Manifest
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Typeface
 import android.location.Criteria
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.View
 import android.view.animation.Animation
 import android.widget.Toast
@@ -35,7 +39,6 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import java.security.Permission
 
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
@@ -288,8 +291,41 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
                 Toast.makeText(this, getString(R.string.perms_granted), Toast.LENGTH_SHORT).show()
                 moveMapToLocation()
             } else {
-                Toast.makeText(this, getString(R.string.perms_required), Toast.LENGTH_SHORT).show()
-                finish()
+                val builder = AlertDialog.Builder(this)
+                builder.setCancelable(false)
+                builder.setMessage(R.string.perms_required)
+                builder.setTitle(R.string.perms_required_title)
+                if (resources.getString(R.string.mode) == "Day")
+                    builder.setIcon(R.drawable.ic_round_warning_black)
+                else
+                    builder.setIcon(R.drawable.ic_round_warning_white)
+
+                builder.setPositiveButton(R.string.perms_required_yes, DialogInterface.OnClickListener { dialog, which ->
+                    askForPermissions()
+                })
+
+                builder.setNegativeButton(R.string.perms_required_no, DialogInterface.OnClickListener { dialog, which ->
+                    finish()
+                })
+
+                val dialog = builder.create()
+                // Style the buttons using code since this is an AlertDialog
+                dialog.setOnShowListener {
+                    val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                    positiveButton.setTextColor(android.graphics.Color.parseColor("#1A60ED"))
+                    positiveButton.isAllCaps = false
+                    positiveButton.typeface = Typeface.DEFAULT_BOLD
+                    positiveButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+                    positiveButton.letterSpacing = 0f
+
+                    val negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+                    negativeButton.setTextColor(android.graphics.Color.parseColor("#FF3333"))
+                    negativeButton.isAllCaps = false
+                    negativeButton.typeface = Typeface.DEFAULT_BOLD
+                    negativeButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+                    negativeButton.letterSpacing = 0f
+                }
+                dialog.show()
             }
         }
     }
