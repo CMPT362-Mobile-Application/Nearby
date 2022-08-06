@@ -60,7 +60,14 @@ class FavouriteListAdapter(val context: Context, private val favPosts: ArrayList
         else
             postLocation.text = "${post.location.latitude}, ${post.location.longitude}"
 
-        postDateTime.text = Util.timestampToDateStrPost(post.startTime)
+        // Set time
+        if (post.event) {
+            val startText = Util.timestampToDateStrPost(post.startTime)
+            val endText = Util.timestampToDateStrPost(post.endTime)
+            postDateTime.text = "$startText to $endText"
+        } else {
+            postDateTime.text = Util.timestampToDateStrPost(post.startTime)
+        }
 
         return view
     }
