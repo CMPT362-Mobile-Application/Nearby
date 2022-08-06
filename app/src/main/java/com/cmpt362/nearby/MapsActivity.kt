@@ -1,6 +1,7 @@
 package com.cmpt362.nearby
 
 import android.Manifest
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
@@ -17,6 +18,8 @@ import android.util.TypedValue
 import android.view.View
 import android.view.animation.Animation
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.ActivityCompat
@@ -52,6 +55,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
 
     private lateinit var postsViewModel: PostsViewModel
 
+    private lateinit var favouriteResult: ActivityResultLauncher<Intent>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         askForPermissions()
@@ -69,6 +74,32 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
+        // Setup listener for FavouriteActivity
+        favouriteResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK && it.data != null && mMap != null) {
+                if(detailActive) { // Close current pin details fragment
+                    pinDetailsClose()
+                    detailActive = false
+                }
+
+                val id = it.data?.getStringExtra("id")
+                if (id != null) {
+                    val index = postsViewModel.idList.value!!.indexOf(id)
+                    val post = postsViewModel.postsList.value!!.get(index)
+
+                    // Scroll map
+                    val latLng = LatLng(post.location.latitude, post.location.longitude)
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng))
+                    mMap.moveCamera(CameraUpdateFactory.zoomTo(15.0f))
+
+                    // Open details fragment
+                    pinDetailsOpen(post, id)
+                    detailActive = true
+                }
+
+            }
+        }
+
         binding.mapNavBar.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.app_bar_filter -> {
@@ -80,7 +111,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
                     return@setOnItemSelectedListener true
                 }
                 R.id.app_bar_favourite -> {
-                    startActivity(Intent(this, FavouriteActivity::class.java))
+                    val intent = Intent(this, FavouriteActivity::class.java)
+                    favouriteResult.launch(intent)
                     return@setOnItemSelectedListener true
                 }
                 else -> false

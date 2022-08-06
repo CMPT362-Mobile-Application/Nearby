@@ -54,6 +54,15 @@
         android:textStyle="bold"
         android:textSize="32sp"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/favouriteTitle"
+        android:layout_centerInParent="true"
+        android:id="@+id/favouriteNoneFound"
+        android:text="@string/favourites_none"
+        android:textSize="16sp"/>
+
     <ListView
         android:id="@+id/favouriteListView"
         android:layout_width="match_parent"

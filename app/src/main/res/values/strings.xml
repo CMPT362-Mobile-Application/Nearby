@@ -11,6 +11,7 @@
     <!--  Favourites Activity  -->
     <string name="favourites_myposts">My Posts</string>
     <string name="favourites_favourites">Favourites</string>
+    <string name="favourites_none">No posts here yet!</string>
 
     <!--  Add Post Activity  -->
     <string name="addpost_title">Add Post</string>
