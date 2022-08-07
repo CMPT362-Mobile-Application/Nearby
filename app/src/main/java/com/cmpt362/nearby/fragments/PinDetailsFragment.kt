@@ -124,7 +124,7 @@ class PinDetailsFragment(val post: Post, val id: String) : Fragment(R.layout.fra
             }
         }
 
-        postsViewModel.postsList.observe(viewLifecycleOwner) {
+        postsViewModel.idPostPairs.observe(viewLifecycleOwner) {
             if (canAddFavourite) {
                 Log.i("favouritesListener", "postsViewModel has been updated")
 

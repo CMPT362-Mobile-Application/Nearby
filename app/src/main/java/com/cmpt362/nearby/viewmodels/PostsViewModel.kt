@@ -1,36 +1,20 @@
 package com.cmpt362.nearby.viewmodels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.cmpt362.nearby.classes.Post
-import com.cmpt362.nearby.database.DbFilter
+import com.cmpt362.nearby.database.PostFilter
 import com.cmpt362.nearby.database.FirestoreDatabase
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 class PostsViewModel: ViewModel() {
-    private val _postList: MutableLiveData<ArrayList<Post>> =
-        MutableLiveData(arrayListOf())
-    val postsList: LiveData<ArrayList<Post>> get() { return _postList }
+    private val _filter: MutableLiveData<PostFilter> =
+        MutableLiveData(PostFilter.Builder().build())
 
-    private val _idList: MutableLiveData<ArrayList<String>> =
-        MutableLiveData(arrayListOf())
-    val idList: LiveData<ArrayList<String>> get() { return _idList }
+    private val _idPostPairs = FirestoreDatabase.getPosts()
+        .distinctUntilChanged().asLiveData(viewModelScope.coroutineContext)
+    val idPostPairs: LiveData<ArrayList<Pair<String, Post>>> get() { return _idPostPairs }
 
-    private val _filter: MutableLiveData<DbFilter> =
-        MutableLiveData(DbFilter.Builder().build())
-
-    init {
-        updatePosts()
-    }
-
-    private fun updatePosts(filter: DbFilter = DbFilter.Builder().build()) {
-        FirestoreDatabase.registerPostsListener(filter) { posts, ids ->
-            _postList.value = posts
-            _idList.value = ids
-        }
-    }
-
-    fun addPost(post: Post) {
-        FirestoreDatabase.addPost(post)
+    fun addPost(post: Post): String {
+        return FirestoreDatabase.addPost(post)
     }
 }

@@ -1,7 +1,11 @@
 package com.cmpt362.nearby.classes
 
+import android.content.Context
+import android.content.SharedPreferences
+import android.preference.PreferenceManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.cmpt362.nearby.activities.FilterActivity
 import com.cmpt362.nearby.viewmodels.CommentViewModel
 import com.cmpt362.nearby.viewmodels.FavouriteViewModel
 import com.google.firebase.Timestamp
@@ -31,6 +35,13 @@ object Util {
     fun timestampToDateStrPost(timestamp: Timestamp): String {
         val df = SimpleDateFormat("dd/MM/yyyy hh:mm aa", Locale.US)
         return df.format(timestamp.toDate())
+    }
+
+    fun millisToTimeStamp(ms: Long): Timestamp? {
+        if (ms == -1L) { return null }
+        val seconds = ms / 1000
+        val ns = ((ms % 1000) * 10000000).toInt()
+        return Timestamp(seconds, ns)
     }
 
     // https://stackoverflow.com/questions/46283981/android-viewmodel-additional-arguments

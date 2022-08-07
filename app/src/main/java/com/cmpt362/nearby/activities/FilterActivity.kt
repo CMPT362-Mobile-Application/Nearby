@@ -17,19 +17,20 @@ import kotlin.collections.ArrayList
 
 class FilterActivity : AppCompatActivity() {
 
-    private var PREFERENCES_KEY = "cmpt362co"
     private lateinit var sharedPref: SharedPreferences
     private lateinit var sharedPrefEditor: SharedPreferences.Editor
-
     private lateinit var filterViewModel: FilterViewModel
-
     private lateinit var filterListViewAdapter: FilterListViewAdapter
 
     private val earliestDate = Calendar.getInstance()
     private val latestDate = Calendar.getInstance()
-    // Keys for the stored values
-    private var EARLIEST_DATETIME_FILTER_KEY = "earliestDateTimeFilterKey"
-    private var LATEST_DATETIME_FILTER_KEY = "latestDateTimeFilterKey"
+
+    companion object {
+        // Keys for the stored values
+        val PREFERENCES_KEY = "filter"
+        val EARLIEST_DATETIME_FILTER_KEY = "earliestDateTimeFilterKey"
+        val LATEST_DATETIME_FILTER_KEY = "latestDateTimeFilterKey"
+    }
 
     private lateinit var binding: ActivityFilterBinding
 
