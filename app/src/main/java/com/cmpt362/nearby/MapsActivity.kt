@@ -2,6 +2,7 @@ package com.cmpt362.nearby
 
 import android.Manifest
 import android.app.AlertDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -29,6 +30,8 @@ import com.cmpt362.nearby.animation.PinDetailAnimation
 import com.cmpt362.nearby.classes.Color
 import com.cmpt362.nearby.classes.IconType
 import com.cmpt362.nearby.classes.Post
+import com.cmpt362.nearby.classes.Util
+import com.cmpt362.nearby.database.PostFilter
 import com.cmpt362.nearby.databinding.ActivityMapsBinding
 import com.cmpt362.nearby.fragments.PinDetailsFragment
 import com.cmpt362.nearby.viewmodels.PostsViewModel
@@ -49,6 +52,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
     private var detailActive: Boolean = false
     private var sentUserToLocation: Boolean = false
     private var detailsFragment: PinDetailsFragment? = null
+    private val postFilter: PostFilter by lazy {
+        val sharedPref = this.getSharedPreferences(
+            FilterActivity.PREFERENCES_KEY, Context.MODE_PRIVATE)
+
+        PostFilter.Builder()
+            .earliest(Util.millisToTimeStamp(
+                    sharedPref.getLong(FilterActivity.LATEST_DATETIME_FILTER_KEY, -1L)))
+            .latest(Util.millisToTimeStamp(
+                sharedPref.getLong(FilterActivity.EARLIEST_DATETIME_FILTER_KEY, -1L)))
+            .build()
+    }
 
     private lateinit var postsViewModel: PostsViewModel
 
@@ -136,7 +150,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
             println("debug: Calling post list observe")
             mMap.clear()
             val markerOptions = MarkerOptions()
-            for (pair in it) {
+            val filteredPairs = postFilter.filter(it)
+            for (pair in filteredPairs) {
                 val post = pair.second
                 val latLng = LatLng(post.location.latitude, post.location.longitude)
                 markerOptions.position(latLng)
@@ -146,6 +161,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
             }
         }
     }
+
 
     private fun getBitmapForIcon(typeVal: Int, colorVal: Int): Bitmap {
         val type = IconType.fromInt(typeVal)
