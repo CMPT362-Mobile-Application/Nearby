@@ -4,6 +4,8 @@ import androidx.lifecycle.*
 import com.cmpt362.nearby.classes.Post
 import com.cmpt362.nearby.database.DbFilter
 import com.cmpt362.nearby.database.FirestoreDatabase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 class PostsViewModel: ViewModel() {
@@ -17,15 +19,17 @@ class PostsViewModel: ViewModel() {
         MutableLiveData(DbFilter.Builder().build())
 
     init {
-        viewModelScope.launch {
-            FirestoreDatabase.getPosts().collect { postIdPair ->
+        viewModelScope.launch(Dispatchers.IO) {
+            FirestoreDatabase.getPosts()
+                .distinctUntilChanged()
+                .collect { postIdPair ->
                 _postList.value = postIdPair.first ?: arrayListOf()
                 _idList.value = postIdPair.second ?: arrayListOf()
             }
         }
     }
 
-    fun addPost(post: Post) {
-        FirestoreDatabase.addPost(post)
+    fun addPost(post: Post): String {
+        return FirestoreDatabase.addPost(post)
     }
 }

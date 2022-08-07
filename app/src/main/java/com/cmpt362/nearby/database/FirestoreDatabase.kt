@@ -50,7 +50,7 @@ object FirestoreDatabase {
     }
 
 
-    fun addPost(entry: Post) {
+    fun addPost(entry: Post): String {
         val db = FirebaseFirestore.getInstance()
         val postDocRef = db.collection(POSTS).document()
         postDocRef.set(entry)
@@ -61,6 +61,8 @@ object FirestoreDatabase {
                 COMMENT_ITEMS to arrayListOf<Comment>()
             )
         )
+
+        return postDocRef.id
     }
 
 

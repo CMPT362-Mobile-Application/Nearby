@@ -18,7 +18,7 @@ class DbFilter private constructor (
 
         fun tags(tags: ArrayList<String>) = apply { this.tags = tags }
         fun earliest(earliestTime: Timestamp) = apply { this.earliestTime = earliestTime}
-        fun latest(latestTIme: Timestamp) = apply { this.latestTIme = latestTIme}
+        fun latest(latestTime: Timestamp) = apply { this.latestTIme = latestTime}
         fun build() = DbFilter(tags, earliestTime, latestTIme)
     }
 
