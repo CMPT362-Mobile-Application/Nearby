@@ -21,12 +21,6 @@ object FirestoreDatabase {
     private val FAVOURITE_LISTENER_KEY = "FAVOURITE_LISTENER"
     private val listeners = HashMap<String, ListenerRegistration>()
 
-    fun registerFavouriteListener(
-        filter: DbFilter,
-        callback: (ArrayList<Post>, ArrayList<String>) -> Unit) {
-        restartPostsListener(FAVOURITE_LISTENER_KEY, filter, callback)
-    }
-
     // increase the number of likes by changeAmount
     fun changeFavouriteCounter(postId: String, changeAmount: Long) {
         FirebaseFirestore.getInstance()
@@ -36,25 +30,9 @@ object FirestoreDatabase {
 
     }
 
-    fun registerPostsListener(
-        filter: DbFilter,
-        callback: (ArrayList<Post>, ArrayList<String>) -> Unit) {
-
-        restartPostsListener(POST_LISTENER_KEY, filter, callback)
-    }
-
-    private fun restartPostsListener(
-        key: String,
-        filter: DbFilter,
-        callback: (ArrayList<Post>, ArrayList<String>) -> Unit) {
-
-        if (listeners.containsKey(key)) {
-            listeners[key]!!.remove()
-            listeners.remove(key)
-        }
-
-        val postListener = filter.getQuery(FirebaseFirestore.getInstance().collection(POSTS))
-            .addSnapshotListener { documentSnapshot, _ ->
+    fun getPosts(): Flow<Pair<ArrayList<Post>, ArrayList<String>>> = callbackFlow {
+        val listenerRegistration = FirebaseFirestore.getInstance()
+            .collection(POSTS).addSnapshotListener { documentSnapshot, _ ->
             if (documentSnapshot != null) {
                 val resultList = arrayListOf<Post>()
                 val docIdList = arrayListOf<String>()
@@ -63,11 +41,12 @@ object FirestoreDatabase {
                     docIdList.add(document.id)
                 }
 
-                callback(resultList, docIdList)
+                trySend(Pair(resultList, docIdList)).isSuccess
             }
         }
-
-        listeners[key] = postListener
+        awaitClose {
+           listenerRegistration.remove()
+        }
     }
 
 
@@ -84,22 +63,6 @@ object FirestoreDatabase {
         )
     }
 
-    fun registerCommentsListener(postId: String, callback: (ArrayList<Comment>) -> Unit) {
-        if (listeners.containsKey(COMMENT_LISTENER_KEY)) {
-            listeners[COMMENT_LISTENER_KEY]!!.remove()
-            listeners.remove(COMMENT_LISTENER_KEY)
-        }
-
-        val commentListener = FirebaseFirestore.getInstance().collection(COMMENTS).document(postId)
-            .addSnapshotListener { document, _ ->
-                if (document != null) {
-                    val commentList = document.toObject(CommentList::class.java)
-                    callback(commentList!!.items)
-                }
-            }
-
-        listeners[COMMENT_LISTENER_KEY] = commentListener
-    }
 
     fun getComments(postId: String): Flow<ArrayList<Comment>> = callbackFlow {
        val listenerRegistration = FirebaseFirestore.getInstance()

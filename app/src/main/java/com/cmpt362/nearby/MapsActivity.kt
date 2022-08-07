@@ -117,7 +117,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
                 mMap.moveCamera(CameraUpdateFactory.zoomTo(15.0f));
                 // There will be posts for sure if the marker is loaded
                 val index = it.title!!.toInt()
-                val post = postsViewModel.postsList.value!!.get(index)
+                val post = postsViewModel.postList.value!!.get(index)
                 val id = postsViewModel.idList.value!!.get(index)
                 pinDetailsOpen(post, id)
                 detailActive = true
@@ -133,7 +133,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
             }
         }
 
-        postsViewModel.postsList.observe(this) {
+        postsViewModel.postList.observe(this) {
             println("debug: Calling post list observe")
             mMap.clear()
             val markerOptions = MarkerOptions()
