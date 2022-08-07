@@ -19,16 +19,15 @@ class FilterActivity : AppCompatActivity() {
 
     private lateinit var sharedPref: SharedPreferences
     private lateinit var sharedPrefEditor: SharedPreferences.Editor
-
     private lateinit var filterViewModel: FilterViewModel
-
     private lateinit var filterListViewAdapter: FilterListViewAdapter
 
     private val earliestDate = Calendar.getInstance()
     private val latestDate = Calendar.getInstance()
-    // Keys for the stored values
+
     companion object {
-        val PREFERENCES_KEY = "cmpt362"
+        // Keys for the stored values
+        val PREFERENCES_KEY = "filter"
         val EARLIEST_DATETIME_FILTER_KEY = "earliestDateTimeFilterKey"
         val LATEST_DATETIME_FILTER_KEY = "latestDateTimeFilterKey"
     }
