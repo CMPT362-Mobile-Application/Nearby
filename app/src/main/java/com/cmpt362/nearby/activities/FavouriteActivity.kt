@@ -26,6 +26,7 @@ class FavouriteActivity : AppCompatActivity() {
     private lateinit var favouriteViewModel: FavouriteViewModel
     private lateinit var postsViewModel: PostsViewModel
     private lateinit var sharedPrefFavs: SharedPreferences
+    private lateinit var sharedPrefUserID: SharedPreferences
     private lateinit var favouriteListAdapter: FavouriteListAdapter
     private lateinit var listView: ListView
 
@@ -49,21 +50,30 @@ class FavouriteActivity : AppCompatActivity() {
 
         // Get shared prefs
         sharedPrefFavs = getSharedPreferences("favourites", Context.MODE_PRIVATE)
+        sharedPrefUserID = getSharedPreferences("userID", Context.MODE_PRIVATE)
 
         // Set up view model to remember state
         favouriteViewModel = ViewModelProvider(this).get(FavouriteViewModel::class.java)
         favouriteViewModel.state.observe(this) {
             if (it == MYPOSTS_KEY) {
+                binding.favouriteListView.adapter = null
                 // Update buttons and title
                 leftButton.background = AppCompatResources.getDrawable(this, R.drawable.favourite_button_left_active)
                 rightButton.background = AppCompatResources.getDrawable(this, R.drawable.favourite_button_right_inactive)
                 title.text = getString(R.string.favourites_myposts)
 
                 // Update ListView
-                binding.favouriteNoneFound.visibility = TextView.VISIBLE
-                binding.favouriteListView.adapter = null
+                if (sharedPrefUserID != null && postsViewModel.postsList.value != null && postsViewModel.idList.value != null
+                    && !favouriteViewModel.myPosts.value.isNullOrEmpty()) {
+                    // According to PinDetailsFragment, the favourite ids can be found both in keys and values
+                    val userID = sharedPrefUserID.getString("UID", null)
+                    favouriteViewModel.loadMyPosts(userID, postsViewModel.postsList.value!!, postsViewModel.idList.value!!)
+                } else {
+                    binding.favouriteNoneFound.visibility = TextView.VISIBLE
+                }
 
             } else if (it == FAVOURITES_KEY) {
+                binding.favouriteListView.adapter = null
                 // Update buttons and title
                 leftButton.background = AppCompatResources.getDrawable(this, R.drawable.favourite_button_left_inactive)
                 rightButton.background = AppCompatResources.getDrawable(this, R.drawable.favourite_button_right_active)
@@ -86,6 +96,22 @@ class FavouriteActivity : AppCompatActivity() {
             if (it != null && it.isNotEmpty() && favouriteViewModel.favouritePostIds.value!!.isNotEmpty()) {
                 binding.favouriteNoneFound.visibility = TextView.GONE
                 val ids = favouriteViewModel.favouritePostIds.value!!
+
+                // Update ListView
+                val favouritePostListAdapter = FavouriteListAdapter(this, it)
+                binding.favouriteListView.adapter = favouritePostListAdapter
+                binding.favouriteListView.setOnItemClickListener { parent, view, position, id ->
+                    val returnIntent = Intent()
+                    returnIntent.putExtra("id", ids[position]) // MapsActivity only needs id
+                    setResult(Activity.RESULT_OK, returnIntent)
+                    finish()
+                }
+            }
+        }
+        favouriteViewModel.myPosts.observe(this) {
+            if (it != null && it.isNotEmpty() && favouriteViewModel.myPostIds.value!!.isNotEmpty()) {
+                binding.favouriteNoneFound.visibility = TextView.GONE
+                val ids = favouriteViewModel.myPostIds.value!!
 
                 // Update ListView
                 val favouritePostListAdapter = FavouriteListAdapter(this, it)
