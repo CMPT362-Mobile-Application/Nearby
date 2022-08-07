@@ -16,11 +16,6 @@ object FirestoreDatabase {
     private val COMMENT_COUNT = "counter"
     private val COMMENT_ITEMS = "items"
 
-    private val POST_LISTENER_KEY = "POST_LISTENER"
-    private val COMMENT_LISTENER_KEY = "COMMENT_LISTENER"
-    private val FAVOURITE_LISTENER_KEY = "FAVOURITE_LISTENER"
-    private val listeners = HashMap<String, ListenerRegistration>()
-
     // increase the number of likes by changeAmount
     fun changeFavouriteCounter(postId: String, changeAmount: Long) {
         FirebaseFirestore.getInstance()
