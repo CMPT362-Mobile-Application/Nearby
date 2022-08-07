@@ -3,12 +3,13 @@ package com.cmpt362.nearby.viewmodels
 import androidx.lifecycle.*
 import com.cmpt362.nearby.classes.Comment
 import com.cmpt362.nearby.database.FirestoreDatabase
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 class CommentViewModel(private val postId: String): ViewModel() {
     val replyingTo: MutableLiveData<Long> = MutableLiveData(Comment.NO_REF)
 
-    private val _commentList =
-        FirestoreDatabase.getComments(postId).asLiveData(viewModelScope.coroutineContext)
+    private val _commentList = FirestoreDatabase.getComments(postId)
+        .distinctUntilChanged().asLiveData(viewModelScope.coroutineContext)
     val commentList: LiveData<ArrayList<Comment>> get() { return _commentList }
 
     fun addComment(commentTxt: String) {

@@ -7,27 +7,15 @@ import com.cmpt362.nearby.database.FirestoreDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import kotlin.coroutines.coroutineContext
 
 class PostsViewModel: ViewModel() {
-    private val _postList = MutableLiveData<ArrayList<Post>>()
-    val postList: LiveData<ArrayList<Post>> get() { return _postList }
-
-    private val _idList = MutableLiveData<ArrayList<String>>()
-    val idList: LiveData<ArrayList<String>> get() { return _idList }
-
     private val _filter: MutableLiveData<DbFilter> =
         MutableLiveData(DbFilter.Builder().build())
 
-    init {
-        viewModelScope.launch(Dispatchers.IO) {
-            FirestoreDatabase.getPosts()
-                .distinctUntilChanged()
-                .collect { postIdPair ->
-                _postList.value = postIdPair.first ?: arrayListOf()
-                _idList.value = postIdPair.second ?: arrayListOf()
-            }
-        }
-    }
+    private val _idPostPairs = FirestoreDatabase.getPosts()
+        .distinctUntilChanged().asLiveData(viewModelScope.coroutineContext)
+    val idPostPairs: LiveData<ArrayList<Pair<String, Post>>> get() { return _idPostPairs }
 
     fun addPost(post: Post): String {
         return FirestoreDatabase.addPost(post)

@@ -9,6 +9,7 @@ import com.google.firebase.firestore.ListenerRegistration
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import java.lang.reflect.Array
 
 object FirestoreDatabase {
     private val COMMENTS = "comments"
@@ -25,18 +26,16 @@ object FirestoreDatabase {
 
     }
 
-    fun getPosts(): Flow<Pair<ArrayList<Post>, ArrayList<String>>> = callbackFlow {
+    fun getPosts(): Flow<ArrayList<Pair<String, Post>>> = callbackFlow {
         val listenerRegistration = FirebaseFirestore.getInstance()
-            .collection(POSTS).addSnapshotListener { documentSnapshot, _ ->
-            if (documentSnapshot != null) {
-                val resultList = arrayListOf<Post>()
-                val docIdList = arrayListOf<String>()
-                for (document in documentSnapshot) {
-                    resultList.add(document.toObject(Post::class.java))
-                    docIdList.add(document.id)
+            .collection(POSTS).addSnapshotListener { snapshot, _ ->
+            if (snapshot != null) {
+                val resultList = arrayListOf<Pair<String, Post>>()
+                for (document in snapshot) {
+                    resultList.add(Pair(document.id, document.toObject(Post::class.java)))
                 }
 
-                trySend(Pair(resultList, docIdList)).isSuccess
+                trySend(resultList).isSuccess
             }
         }
         awaitClose {
@@ -64,9 +63,9 @@ object FirestoreDatabase {
     fun getComments(postId: String): Flow<ArrayList<Comment>> = callbackFlow {
        val listenerRegistration = FirebaseFirestore.getInstance()
            .collection(COMMENTS).document(postId)
-           .addSnapshotListener { document, _ ->
-               if (document != null) {
-                   val commentList = document.toObject(CommentList::class.java)
+           .addSnapshotListener { snapshot, _ ->
+               if (snapshot != null) {
+                   val commentList = snapshot.toObject(CommentList::class.java)
                    trySend(commentList!!.items).isSuccess
                }
            }

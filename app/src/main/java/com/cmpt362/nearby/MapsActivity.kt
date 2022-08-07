@@ -62,7 +62,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         // Hides the top tool bar
         supportActionBar?.hide()
 
-        postsViewModel = ViewModelProvider(this).get(PostsViewModel::class.java)
+        postsViewModel = ViewModelProvider(this)[PostsViewModel::class.java]
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
@@ -109,18 +109,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
 
         mMap.setOnMarkerClickListener {
 
-            if (detailActive) {
+            detailActive = if (detailActive) {
                 pinDetailsClose()
-                detailActive = false
+                false
             } else {
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(it.position));
                 mMap.moveCamera(CameraUpdateFactory.zoomTo(15.0f));
                 // There will be posts for sure if the marker is loaded
                 val index = it.title!!.toInt()
-                val post = postsViewModel.postList.value!!.get(index)
-                val id = postsViewModel.idList.value!!.get(index)
-                pinDetailsOpen(post, id)
-                detailActive = true
+                val idPostPair = postsViewModel.idPostPairs.value!![index]
+                pinDetailsOpen(idPostPair.second, idPostPair.first)
+                true
             }
 
             return@setOnMarkerClickListener true
@@ -133,14 +132,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
             }
         }
 
-        postsViewModel.postList.observe(this) {
+        postsViewModel.idPostPairs.observe(this) {
             println("debug: Calling post list observe")
             mMap.clear()
             val markerOptions = MarkerOptions()
-            for (post in it) {
+            for (pair in it) {
+                val post = pair.second
                 val latLng = LatLng(post.location.latitude, post.location.longitude)
                 markerOptions.position(latLng)
-                markerOptions.title(it.indexOf(post).toString())
+                markerOptions.title(it.indexOf(pair).toString())
                 markerOptions.icon(BitmapDescriptorFactory.fromBitmap(getBitmapForIcon(post.iconType, post.iconColor)))
                 mMap.addMarker(markerOptions)
             }
