@@ -52,6 +52,7 @@
     <string name="chooselocation_save">Save</string>
     <string name="chooselocation_cancel">Cancel</string>
     <string name="chooselocation_toast">Location set.</string>
+    <string name="chooselocation_toast_bad">No location set.</string>
 
     <!-- Comment Activity/Fragment -->
     <string name="reply">Reply</string>

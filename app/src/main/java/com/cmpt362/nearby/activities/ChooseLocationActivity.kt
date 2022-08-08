@@ -42,12 +42,16 @@ class ChooseLocationActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap
         // Save Button
         saveButton = binding.chooselocationSave
         saveButton.setOnClickListener {
-            val returnIntent = Intent()
-            returnIntent.putExtra("latitude", chooseLocationViewModel.lat.value)
-            returnIntent.putExtra("longitude", chooseLocationViewModel.lng.value)
-            setResult(Activity.RESULT_OK, returnIntent)
-            Toast.makeText(this, R.string.chooselocation_toast, Toast.LENGTH_SHORT).show()
-            finish()
+            if (chooseLocationViewModel.lat.value != 0.0 && chooseLocationViewModel.lng.value != 0.0) {
+                val returnIntent = Intent()
+                returnIntent.putExtra("latitude", chooseLocationViewModel.lat.value)
+                returnIntent.putExtra("longitude", chooseLocationViewModel.lng.value)
+                setResult(Activity.RESULT_OK, returnIntent)
+                Toast.makeText(this, R.string.chooselocation_toast, Toast.LENGTH_SHORT).show()
+                finish()
+            } else {
+                Toast.makeText(this, R.string.chooselocation_toast_bad, Toast.LENGTH_SHORT).show()
+            }
         }
 
         // Cancel Button
@@ -92,6 +96,13 @@ class ChooseLocationActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap
     fun initLocationManager() {
         try {
             locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
+            if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                // If location is disabled, default it to Vancouver
+                val latLng = LatLng(49.2827, -123.1207)
+                gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10.0f))
+                return
+            }
             val criteria = Criteria()
             criteria.accuracy = Criteria.ACCURACY_FINE
             val provider = locationManager.getBestProvider(criteria, true)

@@ -286,6 +286,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
     private fun moveMapToLocation() {
         try {
             val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
+            if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                    !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                // If location is disabled, default it to Vancouver
+                val latLng = LatLng(49.2827, -123.1207)
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10.0f))
+                return
+            }
             val criteria = Criteria()
             criteria.accuracy = Criteria.ACCURACY_FINE
             val provider = locationManager.getBestProvider(criteria, true)
