@@ -454,6 +454,7 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             }
         }
 
+        Toast.makeText(this, R.string.addpost_toast_success, Toast.LENGTH_SHORT).show()
         return true
     }
 
