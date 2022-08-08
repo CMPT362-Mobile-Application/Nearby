@@ -9,4 +9,9 @@ class FilterViewModel: ViewModel() {
     val earliestCalendar = MutableLiveData<Calendar>()
     val latestCalendar = MutableLiveData<Calendar>()
     val timePickerSelected = MutableLiveData<String>()
+
+    init {
+        earliestCalendar.value = Calendar.getInstance()
+        latestCalendar.value = Calendar.getInstance()
+    }
 }

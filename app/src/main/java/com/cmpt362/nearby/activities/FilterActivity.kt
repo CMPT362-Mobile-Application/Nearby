@@ -31,7 +31,7 @@ class FilterActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, 
         // Keys for the stored values
         const val PREFERENCES_KEY = "filter"
         const val EARLIEST_DATETIME_FILTER_KEY = "earliestDateTimeFilterKey"
-        const  val LATEST_DATETIME_FILTER_KEY = "latestDateTimeFilterKey"
+        const val LATEST_DATETIME_FILTER_KEY = "latestDateTimeFilterKey"
         const val TAGS_PREFERENCES_KEY = "filterTags"
     }
 
@@ -90,6 +90,7 @@ class FilterActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, 
 
                 // store all tags in shared preferences
                 with (tagsSharedPref.edit()) {
+                    clear()
                     filterViewModel.selectedTags.value?.forEach {
                         putString(it, it)
                     }
@@ -102,12 +103,14 @@ class FilterActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, 
                 with (sharedPref.edit()) {
                     clear()
                     apply()
-                    binding.filterEarliestTv.text = R.string.no_earliest_date_time_set.toString()
-                    binding.filterLatestTv.text = R.string.no_latest_date_time_set.toString()
+                    binding.filterEarliestTv.text = getString(R.string.no_earliest_date_time_set)
+                    binding.filterLatestTv.text = getString(R.string.no_latest_date_time_set)
                 }
                 with (tagsSharedPref.edit()) {
                     clear()
                     apply()
+                    filterViewModel.selectedTags.value?.clear()
+                    filterListViewAdapter.notifyDataSetChanged()
                 }
             }
         }
@@ -130,8 +133,11 @@ class FilterActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, 
     }
 
     private fun setupTagSelection() {
+        //Adapters
+        binding.filterSelectedTagsList.adapter = filterListViewAdapter
+
         // initialize previously set tags
-        filterViewModel.selectedTags.value = ArrayList(tagsSharedPref.all.keys)
+        filterViewModel.selectedTags.value?.addAll(tagsSharedPref.all.keys)
 
         // Get Values from shared preferences
         // Set up Category Spinner
@@ -143,9 +149,6 @@ class FilterActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, 
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             binding.filterTagsSelector.adapter = adapter
         }
-
-        //Adapters
-        binding.filterSelectedTagsList.adapter = filterListViewAdapter
 
         binding.filterTagsSelectorButton.setOnClickListener {
             val tag = binding.filterTagsSelector.selectedItem as String

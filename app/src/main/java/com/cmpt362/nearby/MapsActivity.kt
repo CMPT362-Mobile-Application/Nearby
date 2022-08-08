@@ -60,9 +60,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         val tagsSp = getSharedPreferences(FilterActivity.TAGS_PREFERENCES_KEY, Context.MODE_PRIVATE)
         PostFilter.Builder()
             .earliest(Util.millisToTimeStamp(
-                sp.getLong(FilterActivity.LATEST_DATETIME_FILTER_KEY, -1L)))
-            .latest(Util.millisToTimeStamp(
                 sp.getLong(FilterActivity.EARLIEST_DATETIME_FILTER_KEY, -1L)))
+            .latest(Util.millisToTimeStamp(
+                sp.getLong(FilterActivity.LATEST_DATETIME_FILTER_KEY, -1L)))
             .tags(ArrayList(tagsSp.all.keys))
             .build()
     }

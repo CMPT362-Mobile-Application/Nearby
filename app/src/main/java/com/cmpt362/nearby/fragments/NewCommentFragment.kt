@@ -35,9 +35,12 @@ class NewCommentFragment(private val postId: String) : Fragment(R.layout.fragmen
             if (it.isVisible) { commentViewModel.replyingTo.value = Comment.NO_REF }
         }
         binding.newCommentBtn.setOnClickListener {
-            commentViewModel.addComment(binding.newCommentEdittext.text.toString())
-            binding.newCommentEdittext.setText("")
-            Toast.makeText(activity, "message sent", Toast.LENGTH_SHORT).show()
+            val message = binding.newCommentEdittext.text.toString().trim()
+            if (message.isNotEmpty()) {
+                commentViewModel.addComment(message)
+                binding.newCommentEdittext.setText("")
+                Toast.makeText(activity, "message sent", Toast.LENGTH_SHORT).show()
+            }
         }
 
         return binding.root

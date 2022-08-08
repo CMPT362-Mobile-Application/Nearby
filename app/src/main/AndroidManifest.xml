@@ -60,7 +60,7 @@
             android:configChanges="orientation|keyboardHidden"/>
         <activity
             android:name=".activities.NewPostActivity"
-            android:label="New Post"
+            android:label="Create a New Post"
             android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden"/>
         <activity

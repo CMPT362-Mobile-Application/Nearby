@@ -40,7 +40,12 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
                 android:layout_weight="1"
-                android:text="Add"/>
+                android:text="+ Add"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:textColor="#1A60ED"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textAllCaps="false"/>
         </LinearLayout>
 
 
@@ -74,7 +79,8 @@
                 android:text="Earliest"
                 android:onClick="onTimeBtnClick"
                 android:textStyle="bold"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:textAllCaps="false"/>
 
             <TextView
                 android:id="@+id/filter_earliest_tv"
@@ -103,7 +109,8 @@
                 android:textColor="#1A60ED"
                 android:textStyle="bold"
                 android:onClick="onTimeBtnClick"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:textAllCaps="false"/>
 
             <TextView
                 android:id="@+id/filter_latest_tv"
@@ -129,14 +136,24 @@
             android:text="Apply Filter"
             android:onClick="onClickExit"
             android:layout_margin="10dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:textColor="#1A60ED"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textAllCaps="false"/>
         <Button
             android:id="@+id/filter_clear_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="clear filter"
+            android:text="Clear Filter"
             android:onClick="onClickExit"
             android:layout_margin="10dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:textColor="#FF3333"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textAllCaps="false"/>
     </LinearLayout>
 </RelativeLayout>
