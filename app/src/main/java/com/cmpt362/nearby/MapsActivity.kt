@@ -112,6 +112,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
             when (it.itemId) {
                 R.id.app_bar_filter -> {
                     startActivity(Intent(this, FilterActivity::class.java))
+                    filterResult.launch(intent)
                     return@setOnItemSelectedListener true
                 }
                 R.id.app_bar_new -> {
@@ -178,6 +179,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         }
     }
 
+
+    /** Draw posts in the array list parameter on the map */
     private fun putMarkers(idPostPairs: ArrayList<Pair<String, Post>>) {
         mMap.clear()
         val markerOptions = MarkerOptions()
