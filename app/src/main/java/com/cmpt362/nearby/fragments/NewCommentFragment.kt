@@ -36,10 +36,14 @@ class NewCommentFragment(private val postId: String) : Fragment(R.layout.fragmen
         }
         binding.newCommentBtn.setOnClickListener {
             val message = binding.newCommentEdittext.text.toString().trim()
-            if (message.isNotEmpty()) {
-                commentViewModel.addComment(message)
-                binding.newCommentEdittext.setText("")
-                Toast.makeText(activity, "message sent", Toast.LENGTH_SHORT).show()
+            if (Util.hasNetworkConnection(requireContext())) {
+                if (message.isNotEmpty()) {
+                    commentViewModel.addComment(message)
+                    binding.newCommentEdittext.setText("")
+                    Toast.makeText(activity, "message sent", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(activity, "no internet connection", Toast.LENGTH_SHORT).show()
             }
         }
 

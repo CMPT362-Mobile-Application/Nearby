@@ -3,12 +3,17 @@ package com.cmpt362.nearby.classes
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.net.NetworkInfo
+import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.cmpt362.nearby.viewmodels.CommentViewModel
 import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 object Util {
     fun makeUuid(): String {
@@ -58,6 +63,13 @@ object Util {
         val timePickerDialog = TimePickerDialog(context, listener,
             cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), false)
         timePickerDialog.show()
+    }
+
+
+    fun hasNetworkConnection(context: Context): Boolean {
+        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        return cm.activeNetwork != null &&
+                cm.getNetworkCapabilities(cm.activeNetwork) != null
     }
 
 
