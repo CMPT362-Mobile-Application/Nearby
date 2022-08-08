@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.cmpt362.nearby.R
 import com.cmpt362.nearby.adapters.FavouriteListAdapter
 import com.cmpt362.nearby.classes.Post
+import com.cmpt362.nearby.database.PostFilter
 import com.cmpt362.nearby.databinding.ActivityFavouriteBinding
 import com.cmpt362.nearby.viewmodels.FavouriteViewModel
 import com.cmpt362.nearby.viewmodels.PostsViewModel
@@ -32,6 +33,8 @@ class FavouriteActivity : AppCompatActivity() {
     private lateinit var sharedPrefUserID: SharedPreferences
     private lateinit var favouriteListAdapter: FavouriteListAdapter
     private lateinit var listView: ListView
+    private var myPosts: ArrayList<Pair<String, Post>> = arrayListOf()
+    private var favouritePosts: ArrayList<Pair<String, Post>> = arrayListOf()
 
     // For swipe left/right gesture
     private var x1: Float = 0f
@@ -51,87 +54,65 @@ class FavouriteActivity : AppCompatActivity() {
         title = binding.favouriteTitle
 
 
+        // Get post ids from shared prefs
+        val favIds = getSharedPreferences(FAVOURITES_KEY, Context.MODE_PRIVATE).all.keys
+        val myPostIds = getSharedPreferences(MYPOSTS_KEY, Context.MODE_PRIVATE).all.keys
+
+        // Setup filters for user and favourite posts
+        val myPostFilter = if (myPostIds.isEmpty()) { null }
+        else { PostFilter.Builder().includeIds(myPostIds).build() }
+        val favouritePostFilter = if (favIds.isEmpty()) { null }
+        else { PostFilter.Builder().includeIds(favIds).excludeIds(myPostIds).build() }
+
         // Enable Posts view model to get posts
         postsViewModel = ViewModelProvider(this)[PostsViewModel::class.java]
         postsViewModel.idPostPairs.observe(this) {
-            favouriteViewModel.state.postValue(favouriteViewModel.state.value) // required as it forces an update
+            myPosts = myPostFilter?.filter(it) ?: arrayListOf()
+            favouritePosts = favouritePostFilter?.filter(it) ?: arrayListOf()
+            favouriteViewModel.state.postValue(favouriteViewModel.state.value)
         }
 
-        // Get shared prefs
-        sharedPrefFavs = getSharedPreferences(FAVOURITES_KEY, Context.MODE_PRIVATE)
-        sharedPrefUserID = getSharedPreferences(MYPOSTS_KEY, Context.MODE_PRIVATE)
-
+        favouriteListAdapter = FavouriteListAdapter(this, arrayListOf())
+        binding.favouriteListView.adapter = favouriteListAdapter
         // Set up view model to remember state
-        favouriteViewModel = ViewModelProvider(this).get(FavouriteViewModel::class.java)
+        favouriteViewModel = ViewModelProvider(this)[FavouriteViewModel::class.java]
         favouriteViewModel.state.observe(this) {
             if (it == MYPOSTS_KEY) {
-                binding.favouriteListView.adapter = null
+                binding.favouriteNoneFound.visibility = TextView.GONE
+                favouriteListAdapter.updateItems(myPosts)
                 // Update buttons and title
-                leftButton.background = AppCompatResources.getDrawable(this, R.drawable.favourite_button_left_active)
-                rightButton.background = AppCompatResources.getDrawable(this, R.drawable.favourite_button_right_inactive)
+                leftButton.background =
+                    AppCompatResources.getDrawable(this, R.drawable.favourite_button_left_active)
+                rightButton.background =
+                    AppCompatResources.getDrawable(this, R.drawable.favourite_button_right_inactive)
                 title.text = getString(R.string.favourites_myposts)
 
                 // Update ListView
-                if (sharedPrefUserID != null && sharedPrefUserID.all.isNotEmpty()
-                    && postsViewModel.idPostPairs.value != null) {
-                    // According to PinDetailsFragment, the favourite ids can be found both in keys and values
-                    val userID = sharedPrefUserID.all.keys
-                    favouriteViewModel.loadMyPosts(userID, postsViewModel.idPostPairs.value!!)
-                } else {
+                if (myPosts.isEmpty()) {
                     binding.favouriteNoneFound.visibility = TextView.VISIBLE
                 }
-
             } else if (it == FAVOURITES_KEY) {
-                binding.favouriteListView.adapter = null
+                binding.favouriteNoneFound.visibility = TextView.GONE
+                favouriteListAdapter.updateItems(favouritePosts)
                 // Update buttons and title
                 leftButton.background = AppCompatResources.getDrawable(this, R.drawable.favourite_button_left_inactive)
                 rightButton.background = AppCompatResources.getDrawable(this, R.drawable.favourite_button_right_active)
                 title.text = getString(R.string.favourites_favourites)
 
-                // Update ListView
-                if (sharedPrefFavs != null && sharedPrefFavs.all.isNotEmpty()
-                    && postsViewModel.idPostPairs.value != null) {
-                    // According to PinDetailsFragment, the favourite ids can be found both in keys and values
-                    val favPostIds = sharedPrefFavs.all.keys
-                    favouriteViewModel.loadFavouritePosts(favPostIds, postsViewModel.idPostPairs.value!!)
-                } else {
+                if (favouritePosts.isEmpty()) {
                     binding.favouriteNoneFound.visibility = TextView.VISIBLE
                 }
             } else {
                 finish() // Unknown state, close activity
             }
         }
-        favouriteViewModel.favouritePosts.observe(this) {
-            if (it != null && it.isNotEmpty() && favouriteViewModel.favouritePostIds.value!!.isNotEmpty()) {
-                binding.favouriteNoneFound.visibility = TextView.GONE
-                val ids = favouriteViewModel.favouritePostIds.value!!
 
-                // Update ListView
-                val favouritePostListAdapter = FavouriteListAdapter(this, it)
-                binding.favouriteListView.adapter = favouritePostListAdapter
-                binding.favouriteListView.setOnItemClickListener { parent, view, position, id ->
-                    val returnIntent = Intent()
-                    returnIntent.putExtra("id", ids[position]) // MapsActivity only needs id
-                    setResult(Activity.RESULT_OK, returnIntent)
-                    finish()
-                }
-            }
-        }
-        favouriteViewModel.myPosts.observe(this) {
-            if (it != null && it.isNotEmpty() && favouriteViewModel.myPostIds.value!!.isNotEmpty()) {
-                binding.favouriteNoneFound.visibility = TextView.GONE
-                val ids = favouriteViewModel.myPostIds.value!!
 
-                // Update ListView
-                val favouritePostListAdapter = FavouriteListAdapter(this, it)
-                binding.favouriteListView.adapter = favouritePostListAdapter
-                binding.favouriteListView.setOnItemClickListener { parent, view, position, id ->
-                    val returnIntent = Intent()
-                    returnIntent.putExtra("id", ids[position]) // MapsActivity only needs id
-                    setResult(Activity.RESULT_OK, returnIntent)
-                    finish()
-                }
-            }
+        binding.favouriteListView.setOnItemClickListener { parent, view, position, id ->
+            val returnIntent = Intent()
+            returnIntent.putExtra("id", favouriteListAdapter.getItem(position).first) // MapsActivity only needs id
+            setResult(Activity.RESULT_OK, returnIntent)
+            finish()
         }
 
         // Left Button will change state if needed
