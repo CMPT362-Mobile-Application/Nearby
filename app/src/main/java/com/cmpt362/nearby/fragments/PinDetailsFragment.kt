@@ -26,6 +26,7 @@ import com.cmpt362.nearby.viewmodels.CommentViewModel
 import com.cmpt362.nearby.viewmodels.PostsViewModel
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import java.io.IOException
 
 
 class PinDetailsFragment(val post: Post, val id: String) : Fragment(R.layout.fragment_pin_details) {
@@ -70,13 +71,20 @@ class PinDetailsFragment(val post: Post, val id: String) : Fragment(R.layout.fra
         // Set the title
         binding.pinDetailTitle.text = post.title
 
+        // Set the category
+        binding.pinDetailCategory.text = post.tag
+
         // Set the location
-        val geocoder = Geocoder(requireActivity())
-        val result = geocoder.getFromLocation(post.location.latitude, post.location.longitude, 1)
-        if (result.size > 0)
-            binding.pinDetailLocation.text = result[0].getAddressLine(0)
-        else
+        try {
+            val geocoder = Geocoder(requireActivity())
+            val result = geocoder.getFromLocation(post.location.latitude, post.location.longitude, 1)
+            if (result.size > 0)
+                binding.pinDetailLocation.text = result[0].getAddressLine(0)
+            else
+                binding.pinDetailLocation.text = "${post.location.latitude}, ${post.location.longitude}"
+        } catch (e: IOException) {
             binding.pinDetailLocation.text = "${post.location.latitude}, ${post.location.longitude}"
+        }
 
         // Set time
         if (post.event) {

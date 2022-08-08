@@ -16,6 +16,7 @@ import com.cmpt362.nearby.classes.Util
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import org.w3c.dom.Text
+import java.io.IOException
 
 class FavouriteListAdapter(val context: Context, private var favPosts: ArrayList<Pair<String, Post>>) : BaseAdapter() {
     override fun getCount(): Int {
@@ -60,12 +61,16 @@ class FavouriteListAdapter(val context: Context, private var favPosts: ArrayList
 
         postTitle.text = post.title
 
-        val geocoder = Geocoder(context)
-        val result = geocoder.getFromLocation(post.location.latitude, post.location.longitude, 1)
-        if (result.size > 0)
-            postLocation.text = result[0].getAddressLine(0)
-        else
+        try {
+            val geocoder = Geocoder(context)
+            val result = geocoder.getFromLocation(post.location.latitude, post.location.longitude, 1)
+            if (result.size > 0)
+                postLocation.text = result[0].getAddressLine(0)
+            else
+                postLocation.text = "${post.location.latitude}, ${post.location.longitude}"
+        } catch (e: IOException) {
             postLocation.text = "${post.location.latitude}, ${post.location.longitude}"
+        }
 
         // Set time
         if (post.event) {

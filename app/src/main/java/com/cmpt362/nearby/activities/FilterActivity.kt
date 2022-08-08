@@ -6,8 +6,10 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.cmpt362.nearby.R
 import com.cmpt362.nearby.adapters.FilterListViewAdapter
 import com.cmpt362.nearby.databinding.ActivityFilterBinding
 import com.cmpt362.nearby.viewmodels.FilterViewModel
@@ -45,6 +47,16 @@ class FilterActivity : AppCompatActivity() {
         filterListViewAdapter = FilterListViewAdapter(this, filterViewModel.selectedTags.value!!)
         filterViewModel.selectedTags.observe(this) {
             filterListViewAdapter.notifyDataSetChanged()
+        }
+
+        // Set up Category Spinner
+        ArrayAdapter.createFromResource(
+            this,
+            R.array.addpost_categories,
+            android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            binding.filterTagsSelector.adapter = adapter
         }
 
         // Initialize the variables for Shared Preferences
@@ -94,15 +106,15 @@ class FilterActivity : AppCompatActivity() {
             )
         }
         binding.filterTagsSelectorButton.setOnClickListener {
-            if (filterViewModel.selectedTags.value != null && binding.filterTagsSelector.text.toString().trim().isNotEmpty())
+            val tag = binding.filterTagsSelector.selectedItem as String
+            if (filterViewModel.selectedTags.value != null && tag.trim().isNotEmpty())
             {
-                if (!filterViewModel.selectedTags.value!!.contains(binding.filterTagsSelector.text.toString()))
+                if (!filterViewModel.selectedTags.value!!.contains(tag))
                 {
-                    filterViewModel.selectedTags.value!!.add(binding.filterTagsSelector.text.toString())
+                    filterViewModel.selectedTags.value!!.add(tag)
                     filterListViewAdapter.notifyDataSetChanged()
                 }
             }
-            binding.filterTagsSelector.setText("")
         }
         binding.filterEarliestDateButton.setOnClickListener {
             val dialog = DatePickerDialog(this)

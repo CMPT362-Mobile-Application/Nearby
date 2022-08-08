@@ -33,11 +33,14 @@
     <string name="addpost_camera">Use Camera</string>
     <string name="addpost_gallery">Use Gallery</string>
     <string-array name="addpost_categories">
-        <item>Tag 1</item>
-        <item>Tag 2</item>
-        <item>Tag 3</item>
-        <item>Tag 4</item>
-        <item>Tag 5</item>
+        <item>General</item>
+        <item>Meet Up</item>
+        <item>Interesting Find</item>
+        <item>Eating/Drinking</item>
+        <item>Video Games</item>
+        <item>Sports/Recreation</item>
+        <item>News</item>
+        <item>Advertisement</item>
     </string-array>
     <string name="addpost_toast_notitle">Please add a title.</string>
     <string name="addpost_toast_noimage">Please add an image.</string>
