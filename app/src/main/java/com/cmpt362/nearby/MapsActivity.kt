@@ -60,10 +60,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
             FilterActivity.PREFERENCES_KEY,Context.MODE_PRIVATE)) {
 
             PostFilter.Builder()
-                .earliest(Util.millisToTimeStamp(
-                    getLong(FilterActivity.LATEST_DATETIME_FILTER_KEY, -1L)))
-                .latest(Util.millisToTimeStamp(
-                    getLong(FilterActivity.EARLIEST_DATETIME_FILTER_KEY, -1L)))
+//                .earliest(Util.millisToTimeStamp(
+//                    getLong(FilterActivity.LATEST_DATETIME_FILTER_KEY, -1L)))
+//                .latest(Util.millisToTimeStamp(
+//                    getLong(FilterActivity.EARLIEST_DATETIME_FILTER_KEY, -1L)))
                 .build()
         }
     }
