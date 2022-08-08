@@ -6,6 +6,8 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.MotionEvent
+import android.view.ViewConfiguration
 import android.widget.Button
 import android.widget.ListView
 import android.widget.TextView
@@ -29,6 +31,11 @@ class FavouriteActivity : AppCompatActivity() {
     private lateinit var sharedPrefUserID: SharedPreferences
     private lateinit var favouriteListAdapter: FavouriteListAdapter
     private lateinit var listView: ListView
+
+    // For swipe left/right gesture
+    private var x1: Float = 0f
+    private var y1: Float = 0f
+    private val minDistance: Float = 150f
 
     companion object {
         const val MYPOSTS_KEY = "myposts"
@@ -146,5 +153,30 @@ class FavouriteActivity : AppCompatActivity() {
             finish()
         }
         return true
+    }
+
+    override fun dispatchTouchEvent(event: MotionEvent?): Boolean {
+        when (event?.action) {
+            MotionEvent.ACTION_DOWN -> {
+                x1 = event.x
+                y1 = event.y
+            }
+            MotionEvent.ACTION_UP -> {
+                val x2 = event.x
+                val y2 = event.y
+                val xDiff = x2 - x1
+                val yDiff = y2 - y1
+                if (Math.abs(xDiff) > Math.abs(yDiff) && Math.abs(xDiff) > minDistance) {
+                    if (xDiff > 0) { // Swipe to right
+                        if (favouriteViewModel.state.value == FAVOURITES_KEY)
+                            favouriteViewModel.state.value = MYPOSTS_KEY
+                    } else { // Swipe to left
+                        if (favouriteViewModel.state.value == MYPOSTS_KEY)
+                            favouriteViewModel.state.value = FAVOURITES_KEY
+                    }
+                }
+            }
+        }
+        return super.dispatchTouchEvent(event)
     }
 }

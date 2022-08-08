@@ -22,7 +22,7 @@
             android:fontFamily="sans-serif"
             android:textAllCaps="false"
             android:textStyle="bold"
-            android:textColor="@color/white"
+            android:textColor="#34C759"
             android:letterSpacing="0"
             tools:ignore="ButtonStyle" />
 
@@ -37,7 +37,7 @@
             android:fontFamily="sans-serif"
             android:textAllCaps="false"
             android:textStyle="bold"
-            android:textColor="@color/white"
+            android:textColor="#34C759"
             android:letterSpacing="0"
             tools:ignore="ButtonStyle" />
 
