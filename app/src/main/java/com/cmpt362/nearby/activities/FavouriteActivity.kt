@@ -54,7 +54,7 @@ class FavouriteActivity : AppCompatActivity() {
         // Enable Posts view model to get posts
         postsViewModel = ViewModelProvider(this)[PostsViewModel::class.java]
         postsViewModel.idPostPairs.observe(this) {
-
+            favouriteViewModel.state.postValue(favouriteViewModel.state.value) // required as it forces an update
         }
 
         // Get shared prefs
@@ -72,8 +72,8 @@ class FavouriteActivity : AppCompatActivity() {
                 title.text = getString(R.string.favourites_myposts)
 
                 // Update ListView
-                if (sharedPrefUserID != null && postsViewModel.idPostPairs.value != null
-                    && !favouriteViewModel.myPosts.value.isNullOrEmpty()) {
+                if (sharedPrefUserID != null && sharedPrefUserID.all.isNotEmpty()
+                    && postsViewModel.idPostPairs.value != null) {
                     // According to PinDetailsFragment, the favourite ids can be found both in keys and values
                     val userID = sharedPrefUserID.all.keys
                     favouriteViewModel.loadMyPosts(userID, postsViewModel.idPostPairs.value!!)

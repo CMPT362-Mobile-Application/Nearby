@@ -49,6 +49,8 @@ class FavouriteListAdapter(val context: Context, private val favPosts: ArrayList
                 .placeholder(R.drawable.ic_launcher_background)
                 .fallback(ColorDrawable(Color.TRANSPARENT))
                 .into(imageView)
+        } else {
+            imageView.visibility = ImageView.GONE
         }
 
         postTitle.text = post.title
