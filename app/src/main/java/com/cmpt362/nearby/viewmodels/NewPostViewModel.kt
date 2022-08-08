@@ -1,7 +1,6 @@
 package com.cmpt362.nearby.viewmodels
 
 import android.graphics.Bitmap
-import android.graphics.drawable.Icon
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.cmpt362.nearby.classes.Color
