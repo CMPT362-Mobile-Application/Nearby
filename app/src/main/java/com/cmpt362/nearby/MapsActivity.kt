@@ -56,16 +56,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
     private var sentUserToLocation: Boolean = false
     private var detailsFragment: PinDetailsFragment? = null
     private val postFilter: PostFilter by lazy {
-        with (this.getSharedPreferences(
-            FilterActivity.PREFERENCES_KEY,Context.MODE_PRIVATE)) {
-
-            PostFilter.Builder()
-//                .earliest(Util.millisToTimeStamp(
-//                    getLong(FilterActivity.LATEST_DATETIME_FILTER_KEY, -1L)))
-//                .latest(Util.millisToTimeStamp(
-//                    getLong(FilterActivity.EARLIEST_DATETIME_FILTER_KEY, -1L)))
-                .build()
-        }
+        val sp = getSharedPreferences(FilterActivity.PREFERENCES_KEY, Context.MODE_PRIVATE)
+        val tagsSp = getSharedPreferences(FilterActivity.TAGS_PREFERENCES_KEY, Context.MODE_PRIVATE)
+        PostFilter.Builder()
+            .earliest(Util.millisToTimeStamp(
+                sp.getLong(FilterActivity.LATEST_DATETIME_FILTER_KEY, -1L)))
+            .latest(Util.millisToTimeStamp(
+                sp.getLong(FilterActivity.EARLIEST_DATETIME_FILTER_KEY, -1L)))
+            .tags(ArrayList(tagsSp.all.keys))
+            .build()
     }
 
     private lateinit var postsViewModel: PostsViewModel

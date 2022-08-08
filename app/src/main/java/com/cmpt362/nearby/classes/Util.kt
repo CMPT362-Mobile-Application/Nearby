@@ -1,13 +1,11 @@
 package com.cmpt362.nearby.classes
 
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.Context
-import android.content.SharedPreferences
-import android.preference.PreferenceManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.cmpt362.nearby.activities.FilterActivity
 import com.cmpt362.nearby.viewmodels.CommentViewModel
-import com.cmpt362.nearby.viewmodels.FavouriteViewModel
 import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
 import java.util.*
@@ -37,12 +35,31 @@ object Util {
         return df.format(timestamp.toDate())
     }
 
-    fun millisToTimeStamp(ms: Long): Timestamp? {
-        if (ms == -1L) { return null }
-        val seconds = ms / 1000
-        val ns = ((ms % 1000) * 10000000).toInt()
-        return Timestamp(seconds, ns)
+    fun calendarToStr(calendar: Calendar): String {
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy hh:mm aa", Locale.US)
+        dateFormat.timeZone = calendar.timeZone
+        return dateFormat.format(calendar.time)
     }
+
+    fun millisToTimeStamp(ms: Long): Timestamp? {
+        return if (ms == -1L) { null }
+            else { Timestamp(Date(ms)) }
+    }
+
+    fun showDatePicker(context: Context, listener: DatePickerDialog.OnDateSetListener) {
+        val cal = Calendar.getInstance()
+        val datePickerDialog = DatePickerDialog(context, listener, cal.get(Calendar.YEAR),
+            cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH))
+        datePickerDialog.show()
+    }
+
+    fun showTimePicker(context: Context, listener: TimePickerDialog.OnTimeSetListener) {
+        val cal = Calendar.getInstance()
+        val timePickerDialog = TimePickerDialog(context, listener,
+            cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), false)
+        timePickerDialog.show()
+    }
+
 
     // https://stackoverflow.com/questions/46283981/android-viewmodel-additional-arguments
     // custom ViewModel factory to pass in additional postId parameter when creating

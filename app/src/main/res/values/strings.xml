@@ -57,4 +57,6 @@
     <string name="reply">Reply</string>
     <string name="post">Post</string>
     <string name="comment">Comment</string>
+    <string name="no_latest_date_time_set">No latest date/time set</string>
+    <string name="no_earliest_date_time_set">No earliest date/time set</string>
 </resources>
