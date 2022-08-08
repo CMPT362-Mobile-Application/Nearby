@@ -106,10 +106,10 @@ class PinDetailsFragment(val post: Post, val id: String) : Fragment(R.layout.fra
             if (sharedPref != null) {
                 if (sharedPref.contains(id)) { // un favourite post
                     FirestoreDatabase.changeFavouriteCounter(id, -1)
-                    binding.pinDetailLikeText.text = "${post.favouritesCounter}"
+                    binding.pinDetailLikeText.text = "${binding.pinDetailLikeText.text.toString().toInt() - 1}"
                 } else { // favourite post
                     FirestoreDatabase.changeFavouriteCounter(id, 1)
-                    binding.pinDetailLikeText.text = "${post.favouritesCounter + 1}"
+                    binding.pinDetailLikeText.text = "${binding.pinDetailLikeText.text.toString().toInt() + 1}"
                 }
                 canAddFavourite = true
             }
