@@ -35,6 +35,8 @@ import com.cmpt362.nearby.classes.Util
 import com.cmpt362.nearby.database.FirestoreDatabase
 import com.cmpt362.nearby.databinding.ActivityNewPostBinding
 import com.cmpt362.nearby.viewmodels.NewPostViewModel
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -398,6 +400,12 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
         if (latitude == 0.0 || longitude == 0.0) { // Get current location
             try {
                 val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
+                if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                    !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                    // If location is disabled, block creating a post
+                    Toast.makeText(this, R.string.addpost_toast_location, Toast.LENGTH_SHORT).show()
+                    return false
+                }
                 val criteria = Criteria()
                 criteria.accuracy = Criteria.ACCURACY_FINE
                 val provider = locationManager.getBestProvider(criteria, true)
