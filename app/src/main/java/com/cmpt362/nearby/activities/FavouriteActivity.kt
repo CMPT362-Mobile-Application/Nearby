@@ -16,6 +16,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.ViewModelProvider
 import com.cmpt362.nearby.R
 import com.cmpt362.nearby.adapters.FavouriteListAdapter
+import com.cmpt362.nearby.classes.Post
 import com.cmpt362.nearby.databinding.ActivityFavouriteBinding
 import com.cmpt362.nearby.viewmodels.FavouriteViewModel
 import com.cmpt362.nearby.viewmodels.PostsViewModel
@@ -49,15 +50,16 @@ class FavouriteActivity : AppCompatActivity() {
         rightButton = binding.favouriteRightButton
         title = binding.favouriteTitle
 
+
         // Enable Posts view model to get posts
-        postsViewModel = ViewModelProvider(this).get(PostsViewModel::class.java)
-        postsViewModel.postsList.observe(this) {
-            favouriteViewModel.state.postValue(favouriteViewModel.state.value) // call to update
+        postsViewModel = ViewModelProvider(this)[PostsViewModel::class.java]
+        postsViewModel.idPostPairs.observe(this) {
+
         }
 
         // Get shared prefs
-        sharedPrefFavs = getSharedPreferences("favourites", Context.MODE_PRIVATE)
-        sharedPrefUserID = getSharedPreferences("userID", Context.MODE_PRIVATE)
+        sharedPrefFavs = getSharedPreferences(FAVOURITES_KEY, Context.MODE_PRIVATE)
+        sharedPrefUserID = getSharedPreferences(MYPOSTS_KEY, Context.MODE_PRIVATE)
 
         // Set up view model to remember state
         favouriteViewModel = ViewModelProvider(this).get(FavouriteViewModel::class.java)
@@ -70,11 +72,11 @@ class FavouriteActivity : AppCompatActivity() {
                 title.text = getString(R.string.favourites_myposts)
 
                 // Update ListView
-                if (sharedPrefUserID != null && postsViewModel.postsList.value != null && postsViewModel.idList.value != null
+                if (sharedPrefUserID != null && postsViewModel.idPostPairs.value != null
                     && !favouriteViewModel.myPosts.value.isNullOrEmpty()) {
                     // According to PinDetailsFragment, the favourite ids can be found both in keys and values
-                    val userID = sharedPrefUserID.getString("UID", null)
-                    favouriteViewModel.loadMyPosts(userID, postsViewModel.postsList.value!!, postsViewModel.idList.value!!)
+                    val userID = sharedPrefUserID.all.keys
+                    favouriteViewModel.loadMyPosts(userID, postsViewModel.idPostPairs.value!!)
                 } else {
                     binding.favouriteNoneFound.visibility = TextView.VISIBLE
                 }
@@ -88,10 +90,10 @@ class FavouriteActivity : AppCompatActivity() {
 
                 // Update ListView
                 if (sharedPrefFavs != null && sharedPrefFavs.all.isNotEmpty()
-                    && postsViewModel.postsList.value != null && postsViewModel.idList.value != null) {
+                    && postsViewModel.idPostPairs.value != null) {
                     // According to PinDetailsFragment, the favourite ids can be found both in keys and values
                     val favPostIds = sharedPrefFavs.all.keys
-                    favouriteViewModel.loadFavouritePosts(favPostIds, postsViewModel.postsList.value!!, postsViewModel.idList.value!!)
+                    favouriteViewModel.loadFavouritePosts(favPostIds, postsViewModel.idPostPairs.value!!)
                 } else {
                     binding.favouriteNoneFound.visibility = TextView.VISIBLE
                 }

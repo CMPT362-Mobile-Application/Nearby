@@ -456,7 +456,7 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
         )
 
         val postId = FirestoreDatabase.addPost(newPost)
-        val sharedPref = this.getSharedPreferences("userPosts", Context.MODE_PRIVATE)
+        val sharedPref = this.getSharedPreferences(FavouriteActivity.MYPOSTS_KEY, Context.MODE_PRIVATE)
         if (sharedPref != null) {
             with(sharedPref.edit()) {
                 putString(postId, postId)

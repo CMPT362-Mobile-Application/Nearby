@@ -10,6 +10,7 @@ import com.cmpt362.nearby.activities.FavouriteActivity
 import com.cmpt362.nearby.classes.Comment
 import com.cmpt362.nearby.classes.Post
 import com.cmpt362.nearby.database.FirestoreDatabase
+import com.cmpt362.nearby.database.PostFilter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
@@ -28,53 +29,36 @@ class FavouriteViewModel(): ViewModel() {
         state.value = FavouriteActivity.MYPOSTS_KEY // default to My Posts
     }
 
-    fun loadFavouritePosts(favIds: MutableSet<String>, allPosts: ArrayList<Post>, allPostIds: ArrayList<String>) {
+    fun loadFavouritePosts(favIds: MutableSet<String>, allIdPostPairs: ArrayList<Pair<String, Post>>) {
         if (favouritePosts.value != null) { // Check if posts already loaded
             favouritePosts.postValue(favouritePosts.value)
             return
         }
 
         CoroutineScope(IO).launch {
-            val favPosts = ArrayList<Post>()
-            val favPostIds = ArrayList<String>()
-            for (favId in favIds) {
-                val index = allPostIds.indexOf(favId)
-                if (index > -1) {
-                    favPosts.add(allPosts[index])
-                    favPostIds.add(allPostIds[index])
-                } else {
-                    // would probably remove the link here since the post would likely be deleted
-                }
-            }
-            if (favPosts.isNotEmpty()) {
+            val filteredPairs = PostFilter.Builder().includeIds(favIds).build()
+                .filter(allIdPostPairs)
+            if (filteredPairs.isNotEmpty()) {
                 withContext(Main) {
-                    favouritePostIds.value = favPostIds
-                    favouritePosts.value = favPosts
+                    favouritePostIds.value = filteredPairs.map { it.first } as ArrayList
+                    favouritePosts.value = filteredPairs.map { it.second } as ArrayList
                 }
             }
         }
     }
-    fun loadMyPosts(userId: String?, allPosts: ArrayList<Post>, allPostIds: ArrayList<String>) {
+    fun loadMyPosts(myIds: MutableSet<String>, allIdPostPairs: ArrayList<Pair<String, Post>>) {
         if (myPosts.value != null) { // Check if posts already loaded
             myPosts.postValue(myPosts.value)
             return
         }
 
         CoroutineScope(IO).launch {
-            val posts = ArrayList<Post>()
-            val postIds = ArrayList<String>()
-            allPosts.forEachIndexed { index, post ->
-                if (post.userId == userId) {
-                    posts.add(allPosts[index])
-                    postIds.add(allPostIds[index])
-                } else {
-                    // would probably remove the link here since the post would likely be deleted
-                }
-            }
-            if (posts.isNotEmpty()) {
+            val filteredPairs = PostFilter.Builder().includeIds(myIds).build()
+                .filter(allIdPostPairs)
+            if (filteredPairs.isNotEmpty()) {
                 withContext(Main) {
-                    myPostIds.value = postIds
-                    myPosts.value = posts
+                    myPostIds.value = filteredPairs.map { it.first } as ArrayList
+                    myPosts.value = filteredPairs.map { it.second } as ArrayList
                 }
             }
         }

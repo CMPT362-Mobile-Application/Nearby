@@ -11,15 +11,16 @@ class PostFilter private constructor (
     private var tags: ArrayList<String>,
     private var earliestTime: Timestamp?,
     private var latestTIme: Timestamp?,
-    private var excludeIds: ArrayList<String>,
-    private var includeIds: ArrayList<String>) {
+    private var excludeIds: MutableSet<String>,
+    private var includeIds: MutableSet<String>) {
 
     data class Builder (
         var tags: ArrayList<String> = arrayListOf(),
         var earliestTime: Timestamp? = null,
         var latestTime: Timestamp? = null,
-        var excludeIds: ArrayList<String> = arrayListOf(),
-        var includeIds: ArrayList<String> = arrayListOf()) {
+        var excludeIds: MutableSet<String> = mutableSetOf(),
+        var includeIds: MutableSet<String> = mutableSetOf()
+    ) {
 
         fun tags(tags: ArrayList<String>) = apply { this.tags = tags }
         fun earliest(earliestTime: Timestamp?) = apply { this.earliestTime = earliestTime}
@@ -28,12 +29,12 @@ class PostFilter private constructor (
         /**
          * Posts with these ids will be first excluded during the filter
          */
-        fun excludeIds(ids: ArrayList<String>) = apply { this.excludeIds = ids }
+        fun excludeIds(ids: MutableSet<String>) = apply { this.excludeIds = ids }
 
         /**
          * Posts must have these ids to be included after the filter
          */
-        fun includeIds(ids: ArrayList<String>) = apply { this.includeIds = ids }
+        fun includeIds(ids: MutableSet<String>) = apply { this.includeIds = ids }
         fun build() = PostFilter(tags, earliestTime, latestTime, excludeIds, includeIds)
     }
 

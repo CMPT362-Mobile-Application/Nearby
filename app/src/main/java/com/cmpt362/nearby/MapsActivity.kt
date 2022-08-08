@@ -99,9 +99,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
 
                 val id = it.data?.getStringExtra("id")
                 if (id != null) {
-                    val index = postsViewModel.idList.value!!.indexOf(id)
-                    val post = postsViewModel.postsList.value!!.get(index)
-
+                    val post = postsViewModel.idPostPairs.value!!.find { pair ->
+                        pair.first == id }!!.second
                     // Scroll map
                     val latLng = LatLng(post.location.latitude, post.location.longitude)
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng))
