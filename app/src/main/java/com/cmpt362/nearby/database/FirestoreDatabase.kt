@@ -66,7 +66,11 @@ object FirestoreDatabase {
            .addSnapshotListener { snapshot, _ ->
                if (snapshot != null) {
                    val commentList = snapshot.toObject(CommentList::class.java)
-                   trySend(commentList!!.items).isSuccess
+                   if (commentList != null) {
+                       trySend(commentList.items).isSuccess
+                   } else {
+                       trySend(arrayListOf()).isSuccess
+                   }
                }
            }
 

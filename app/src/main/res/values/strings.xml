@@ -33,25 +33,32 @@
     <string name="addpost_camera">Use Camera</string>
     <string name="addpost_gallery">Use Gallery</string>
     <string-array name="addpost_categories">
-        <item>Tag 1</item>
-        <item>Tag 2</item>
-        <item>Tag 3</item>
-        <item>Tag 4</item>
-        <item>Tag 5</item>
+        <item>General</item>
+        <item>Meet Up</item>
+        <item>Interesting Find</item>
+        <item>Eating/Drinking</item>
+        <item>Video Games</item>
+        <item>Sports/Recreation</item>
+        <item>News</item>
+        <item>Advertisement</item>
     </string-array>
     <string name="addpost_toast_notitle">Please add a title.</string>
     <string name="addpost_toast_noimage">Please add an image.</string>
     <string name="addpost_toast_nostart">Please set the Start date.</string>
     <string name="addpost_toast_noend">Please set the End date.</string>
     <string name="addpost_toast_location">Error with location.</string>
+    <string name="addpost_toast_success">Created Post!</string>
 
     <!--  Choose Location Activity  -->
     <string name="chooselocation_save">Save</string>
     <string name="chooselocation_cancel">Cancel</string>
     <string name="chooselocation_toast">Location set.</string>
+    <string name="chooselocation_toast_bad">No location set.</string>
 
     <!-- Comment Activity/Fragment -->
     <string name="reply">Reply</string>
     <string name="post">Post</string>
     <string name="comment">Comment</string>
+    <string name="no_latest_date_time_set">No latest date/time set</string>
+    <string name="no_earliest_date_time_set">No earliest date/time set</string>
 </resources>

@@ -1,7 +1,6 @@
 package com.cmpt362.nearby.viewmodels
 
 import android.graphics.Bitmap
-import android.graphics.drawable.Icon
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.cmpt362.nearby.classes.Color
@@ -19,8 +18,7 @@ class NewPostViewModel: ViewModel() {
     val longitude = MutableLiveData(0.0)
 
     init {
-        val cal = Calendar.getInstance()
-        startCalendar.value = cal
-        endCalendar.value = cal
+        startCalendar.value = Calendar.getInstance()
+        endCalendar.value = Calendar.getInstance()
     }
 }

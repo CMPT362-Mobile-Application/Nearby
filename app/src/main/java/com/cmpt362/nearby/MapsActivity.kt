@@ -55,22 +55,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
     private var detailActive: Boolean = false
     private var sentUserToLocation: Boolean = false
     private var detailsFragment: PinDetailsFragment? = null
-    private val postFilter: PostFilter by lazy {
-        with (this.getSharedPreferences(
-            FilterActivity.PREFERENCES_KEY,Context.MODE_PRIVATE)) {
-
-            PostFilter.Builder()
-                .earliest(Util.millisToTimeStamp(
-                    getLong(FilterActivity.LATEST_DATETIME_FILTER_KEY, -1L)))
-                .latest(Util.millisToTimeStamp(
-                    getLong(FilterActivity.EARLIEST_DATETIME_FILTER_KEY, -1L)))
-                .build()
-        }
-    }
-
+    private lateinit var postFilter: PostFilter
     private lateinit var postsViewModel: PostsViewModel
-
     private lateinit var favouriteResult: ActivityResultLauncher<Intent>
+    private lateinit var filterResult: ActivityResultLauncher<Intent>
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,6 +72,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         supportActionBar?.hide()
 
         postsViewModel = ViewModelProvider(this)[PostsViewModel::class.java]
+        postFilter = buildPostFilter()
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
@@ -91,7 +81,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
 
         // Setup listener for FavouriteActivity
         favouriteResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (it.resultCode == Activity.RESULT_OK && it.data != null && mMap != null) {
+            if (it.resultCode == Activity.RESULT_OK && it.data != null) {
                 if(detailActive) { // Close current pin details fragment
                     pinDetailsClose()
                     detailActive = false
@@ -110,14 +100,19 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
                     pinDetailsOpen(post, id)
                     detailActive = true
                 }
-
             }
+        }
+
+        filterResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            postFilter = buildPostFilter()
+            putMarkers(postsViewModel.idPostPairs.value!!)
         }
 
         binding.mapNavBar.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.app_bar_filter -> {
                     startActivity(Intent(this, FilterActivity::class.java))
+                    filterResult.launch(intent)
                     return@setOnItemSelectedListener true
                 }
                 R.id.app_bar_new -> {
@@ -134,6 +129,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
 
         }
     }
+
 
     /**
      * Manipulates the map once available.
@@ -179,21 +175,29 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         }
 
         postsViewModel.idPostPairs.observe(this) {
-            println("debug: Calling post list observe")
-            mMap.clear()
-            val markerOptions = MarkerOptions()
-            val filteredPairs = postFilter.filter(it)
-            for (pair in filteredPairs) {
-                val post = pair.second
-                val latLng = LatLng(post.location.latitude, post.location.longitude)
-                markerOptions.position(latLng)
-                markerOptions.title(it.indexOf(pair).toString())
-                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(getBitmapForIcon(post.iconType, post.iconColor)))
-                mMap.addMarker(markerOptions)
-            }
+            putMarkers(it)
         }
     }
 
+
+    /** Draw posts in the array list parameter on the map */
+    private fun putMarkers(idPostPairs: ArrayList<Pair<String, Post>>) {
+        mMap.clear()
+        val markerOptions = MarkerOptions()
+        val filteredPairs = postFilter.filter(idPostPairs)
+        for (pair in filteredPairs) {
+            val post = pair.second
+            val latLng = LatLng(post.location.latitude, post.location.longitude)
+            markerOptions.position(latLng)
+            markerOptions.title(idPostPairs.indexOf(pair).toString())
+            markerOptions.icon(
+                BitmapDescriptorFactory.fromBitmap(
+                    getBitmapForIcon(post.iconType, post.iconColor)
+                )
+            )
+            mMap.addMarker(markerOptions)
+        }
+    }
 
     private fun getBitmapForIcon(typeVal: Int, colorVal: Int): Bitmap {
         val type = IconType.fromInt(typeVal)
@@ -232,6 +236,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         return bitmap
     }
 
+
     private fun pinDetailsOpen(post: Post, id: String) {
         //Zoom on the pin selected
 
@@ -257,6 +262,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         mMap.uiSettings.isScrollGesturesEnabledDuringRotateOrZoom = false;
         binding.pinDetailFragmentContainer.startAnimation(animation)
     }
+
 
     private fun pinDetailsClose() {
         var animation: Animation? = null
@@ -284,9 +290,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         binding.pinDetailFragmentContainer.startAnimation(animation)
     }
 
+
     private fun moveMapToLocation() {
         try {
             val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
+            if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                    !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                // If location is disabled, default it to Vancouver
+                val latLng = LatLng(49.2827, -123.1207)
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10.0f))
+                return
+            }
             val criteria = Criteria()
             criteria.accuracy = Criteria.ACCURACY_FINE
             val provider = locationManager.getBestProvider(criteria, true)
@@ -304,6 +318,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         }
     }
 
+
     override fun onLocationChanged(location: Location) {
         if (!sentUserToLocation) {
             val latLng = LatLng(location.latitude, location.longitude)
@@ -311,6 +326,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
             sentUserToLocation = true
         }
     }
+
 
     private fun askForPermissions() {
         val permissions = ArrayList<String>()
@@ -392,5 +408,24 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         } else {
             finish()
         }
+    }
+
+    private fun buildPostFilter(): PostFilter {
+        val sp = getSharedPreferences(FilterActivity.PREFERENCES_KEY, Context.MODE_PRIVATE)
+        val tagsSp = getSharedPreferences(FilterActivity.TAGS_PREFERENCES_KEY, Context.MODE_PRIVATE)
+
+        return PostFilter.Builder()
+            .earliest(
+                Util.millisToTimeStamp(
+                    sp.getLong(FilterActivity.EARLIEST_DATETIME_FILTER_KEY, -1L)
+                )
+            )
+            .latest(
+                Util.millisToTimeStamp(
+                    sp.getLong(FilterActivity.LATEST_DATETIME_FILTER_KEY, -1L)
+                )
+            )
+            .tags(ArrayList(tagsSp.all.keys))
+            .build()
     }
 }

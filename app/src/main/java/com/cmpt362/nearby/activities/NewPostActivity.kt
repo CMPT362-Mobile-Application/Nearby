@@ -20,7 +20,6 @@ import android.telephony.TelephonyManager
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
-import android.view.Window
 import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -36,6 +35,8 @@ import com.cmpt362.nearby.classes.Util
 import com.cmpt362.nearby.database.FirestoreDatabase
 import com.cmpt362.nearby.databinding.ActivityNewPostBinding
 import com.cmpt362.nearby.viewmodels.NewPostViewModel
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -44,9 +45,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import java.io.File
-import com.cmpt362.nearby.viewmodels.PostsViewModel
 import com.google.firebase.Timestamp
-import java.text.SimpleDateFormat
 import java.util.*
 
 class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
@@ -123,13 +122,13 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
         // Event Set Start button
         binding.addpostEventstartbutton.setOnClickListener {
             newPostViewModel.startOrEnd.value = "start"
-            showDateTimePicker()
+            Util.showDatePicker(this, this)
         }
 
         // Event set end button
         binding.addpostEventendbutton.setOnClickListener {
             newPostViewModel.startOrEnd.value = "end"
-            showDateTimePicker()
+            Util.showDatePicker(this, this)
         }
 
         // Add image button
@@ -282,26 +281,15 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
         locationResult.launch(intent)
     }
 
-    fun showDateTimePicker() {
-        val cal = Calendar.getInstance()
-        val datePickerDialog = DatePickerDialog(this, this, cal.get(Calendar.YEAR),
-            cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH))
-        datePickerDialog.show()
-    }
-
     // Will respond when the date has been entered and will open time picker dialog
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
-        val cal = Calendar.getInstance()
         // Store result in whichever button initiated the request
         if (newPostViewModel.startOrEnd.value == "start")
             newPostViewModel.startCalendar.value?.set(year, month, dayOfMonth)
         else if (newPostViewModel.startOrEnd.value == "end")
             newPostViewModel.endCalendar.value?.set(year, month, dayOfMonth)
 
-        // Open TimePickerDialog
-        val timePickerDialog = TimePickerDialog(this, this,
-            cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), false)
-        timePickerDialog.show()
+        Util.showTimePicker(this, this)
     }
 
     // Will respond once the time has been set, and update the text in the activity
@@ -312,20 +300,16 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             newPostViewModel.startCalendar.value?.set(Calendar.MINUTE, minute)
 
             // Update TextView
-            val dateFormat = SimpleDateFormat("dd/MM/yyyy hh:mm aa", Locale.US)
-            dateFormat.timeZone = newPostViewModel.startCalendar.value?.timeZone!!
-            val dateTime = dateFormat.format(newPostViewModel.startCalendar.value?.time!!)
-            binding.addpostEventstarttext.text = dateTime
+            binding.addpostEventstarttext.text =
+                Util.calendarToStr(newPostViewModel.startCalendar.value!!)
         }
         else if (newPostViewModel.startOrEnd.value == "end") {
             newPostViewModel.endCalendar.value?.set(Calendar.HOUR_OF_DAY, hourOfDay)
             newPostViewModel.endCalendar.value?.set(Calendar.MINUTE, minute)
 
             // Update TextView
-            val dateFormat = SimpleDateFormat("dd/MM/yyyy hh:mm aa", Locale.US)
-            dateFormat.timeZone = newPostViewModel.endCalendar.value?.timeZone!!
-            val dateTime = dateFormat.format(newPostViewModel.endCalendar.value?.time!!)
-            binding.addpostEventendtext.text = dateTime
+            binding.addpostEventendtext.text =
+                Util.calendarToStr(newPostViewModel.endCalendar.value!!)
         }
     }
 
@@ -416,6 +400,12 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
         if (latitude == 0.0 || longitude == 0.0) { // Get current location
             try {
                 val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
+                if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                    !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                    // If location is disabled, block creating a post
+                    Toast.makeText(this, R.string.addpost_toast_location, Toast.LENGTH_SHORT).show()
+                    return false
+                }
                 val criteria = Criteria()
                 criteria.accuracy = Criteria.ACCURACY_FINE
                 val provider = locationManager.getBestProvider(criteria, true)
@@ -464,6 +454,7 @@ class NewPostActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener,
             }
         }
 
+        Toast.makeText(this, R.string.addpost_toast_success, Toast.LENGTH_SHORT).show()
         return true
     }
 

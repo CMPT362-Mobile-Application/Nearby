@@ -25,7 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-            <EditText
+            <Spinner
                 android:id="@+id/filter_tags_selector"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -33,8 +33,6 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="0dp"
-                android:inputType="text"
-                android:maxLines="1"
                 android:hint="Tag"/>
             <Button
                 android:id="@+id/filter_tags_selector_button"
@@ -42,7 +40,12 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
                 android:layout_weight="1"
-                android:text="Add"/>
+                android:text="+ Add"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:textColor="#1A60ED"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textAllCaps="false"/>
         </LinearLayout>
 
 
@@ -64,30 +67,29 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <TextView
+            <Button
+                android:id="@+id/filter_earliest_btn"
                 android:layout_width="55dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_weight="1"
-                android:text="Earliest:"
-                android:textSize="20dp" />
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:textColor="#1A60ED"
+                android:text="Earliest"
+                android:onClick="onTimeBtnClick"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textAllCaps="false"/>
 
-            <Button
-                android:id="@+id/filter_earliest_date_button"
+            <TextView
+                android:id="@+id/filter_earliest_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginRight="5dp"
-                android:text="date" />
+                android:layout_marginEnd="5dp"
+                android:text="@string/no_earliest_date_time_set" />
 
-            <Button
-                android:id="@+id/filter_earliest_time_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="20dp"
-                android:layout_weight="1"
-                android:text="time" />
         </LinearLayout>
 
         <LinearLayout
@@ -95,30 +97,29 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <TextView
+            <Button
+                android:id="@+id/filter_latest_btn"
                 android:layout_width="55dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_weight="1"
-                android:text="Latest:"
-                android:textSize="20dp" />
+                android:text="Latest"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:textColor="#1A60ED"
+                android:textStyle="bold"
+                android:onClick="onTimeBtnClick"
+                android:textSize="16sp"
+                android:textAllCaps="false"/>
 
-            <Button
-                android:id="@+id/filter_latest_date_button"
+            <TextView
+                android:id="@+id/filter_latest_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_weight="1"
-                android:text="date" />
+                android:text="@string/no_latest_date_time_set" />
 
-            <Button
-                android:id="@+id/filter_latest_time_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="20dp"
-                android:layout_weight="1"
-                android:text="time" />
         </LinearLayout>
     </LinearLayout>
 
@@ -133,14 +134,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Apply Filter"
+            android:onClick="onClickExit"
             android:layout_margin="10dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:textColor="#1A60ED"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textAllCaps="false"/>
         <Button
             android:id="@+id/filter_clear_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="clear filter"
+            android:text="Clear Filter"
+            android:onClick="onClickExit"
             android:layout_margin="10dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:textColor="#FF3333"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textAllCaps="false"/>
     </LinearLayout>
 </RelativeLayout>
