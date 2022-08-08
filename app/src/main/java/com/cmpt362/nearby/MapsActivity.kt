@@ -199,7 +199,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
         }
     }
 
-        private fun getBitmapForIcon(typeVal: Int, colorVal: Int): Bitmap {
+    private fun getBitmapForIcon(typeVal: Int, colorVal: Int): Bitmap {
         val type = IconType.fromInt(typeVal)
         val color = Color.fromInt(colorVal)
         val drawableId = when (type) {
