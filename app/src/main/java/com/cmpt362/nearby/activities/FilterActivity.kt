@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.DatePicker
 import android.widget.TimePicker
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.cmpt362.nearby.R
@@ -77,15 +78,22 @@ class FilterActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, 
     fun onClickExit(view: View) {
         when (view.id) {
             R.id.filter_apply_button -> {
+                var savedTime = false
                 // store the earliest and latest time of post in shared preferences
-                with (sharedPref.edit()) {
-                    filterViewModel.earliestCalendar.value?.let {
-                        putLong(EARLIEST_DATETIME_FILTER_KEY, it.timeInMillis)
+                if (binding.filterEarliestTv.text == getString(R.string.no_earliest_date_time_set) ||
+                        binding.filterLatestTv.text == getString(R.string.no_latest_date_time_set)) {
+                    savedTime = false
+                } else {
+                    with (sharedPref.edit()) {
+                        filterViewModel.earliestCalendar.value?.let {
+                            putLong(EARLIEST_DATETIME_FILTER_KEY, it.timeInMillis)
+                        }
+                        filterViewModel.latestCalendar.value?.let {
+                            putLong(LATEST_DATETIME_FILTER_KEY, it.timeInMillis)
+                        }
+                        apply()
                     }
-                    filterViewModel.latestCalendar.value?.let {
-                        putLong(LATEST_DATETIME_FILTER_KEY, it.timeInMillis)
-                    }
-                    apply()
+                    savedTime = true
                 }
 
                 // store all tags in shared preferences
@@ -96,6 +104,18 @@ class FilterActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, 
                     }
                     apply()
                 }
+
+                // Display status toast for filter
+                if (savedTime && tagsSharedPref.all.isNotEmpty()) {
+                    Toast.makeText(this, "Filter by date/time and tags saved.", Toast.LENGTH_SHORT).show()
+                } else if (savedTime) {
+                    Toast.makeText(this, "Filter by date/time only saved.", Toast.LENGTH_SHORT).show()
+                } else if (tagsSharedPref.all.isNotEmpty()) {
+                    Toast.makeText(this, "Filter by tags only saved.", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "No filter set.", Toast.LENGTH_SHORT).show()
+                }
+
                 finish()
             }
 
@@ -112,6 +132,7 @@ class FilterActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener, 
                     filterViewModel.selectedTags.value?.clear()
                     filterListViewAdapter.notifyDataSetChanged()
                 }
+                Toast.makeText(this, "Filter has been cleared.", Toast.LENGTH_SHORT).show()
             }
         }
     }
