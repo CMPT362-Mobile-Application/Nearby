@@ -16,10 +16,9 @@ View our website here: https://cmpt362-mobile-application.github.io/Nearby-Websi
 - Glide
 
 ## How to Run
-- You can build using Android Studio by downloading our source code on our website: https://cmpt362-mobile-application.github.io/Nearby-Website/
-- Or you can download our APK directly
+- You can build using Android Studio by downloading our source code
 
-If API keys are no longer working then you will need supply your own keys:
+You need to add your own API keys:
 - In AndroidManifest.xml in Nearby/app/src/main
   - Add your Google Maps API key to line 38 underneath android:name="com.google.android.geo.API_KEY"
 
